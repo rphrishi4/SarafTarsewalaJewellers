@@ -60,7 +60,7 @@ function roundToTwoDecimalPlaces(number) {
 
   const fetchData = () =>{
     // Define the API URL
-    const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key=f1f58b74f8c75e7edc3289fb048cb9b8&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
+    const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key=d12a0e274efd07628b5849b95acd4963&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
 
 
     try {
