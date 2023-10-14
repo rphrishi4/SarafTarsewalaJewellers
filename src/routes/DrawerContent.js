@@ -22,7 +22,7 @@ const CustomDrawer = (props) => {
           source={require('../assets/icons/man.png')}
           style={styles.profileImage}
         />
-        <Text style={styles.username}>John Doe</Text>
+        <Text style={styles.username}>Heya! Admin</Text>
       </View>
     {
       isAuthenticated  ?
@@ -57,9 +57,9 @@ const CustomDrawer = (props) => {
 
       <TouchableOpacity
         style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('Plans')}
+        onPress={() => props.navigation.navigate('Banner')}
       >
-        <Text style={styles.drawerItemText}>Plans</Text>
+        <Text style={styles.drawerItemText}>Banner Images</Text>
       </TouchableOpacity>
 
 

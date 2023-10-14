@@ -9,6 +9,7 @@ const AdminPanelScreen = () => {
 
   const [minRange, setMinRange] = useState('');
   const [maxRange, setMaxRange] = useState('');
+  const [priceSet, setPrice] = useState('');
   const [check, setCheck] = useState(false)
   const [rate24K, setRate24K] = useState('');
   const [rate22K, setRate22K] = useState('');
@@ -73,13 +74,27 @@ function roundToTwoDecimalPlaces(number) {
   return (
     <ScrollView style={styles.container}>
     <View style={styles.card}>
-      <Text style={styles.heading}>24 Karat Live Price</Text>  
+      <Text style={styles.heading}>24 Karat Live Price W/O GST</Text>  
       <Text style={styles.cost}>{rate24K}</Text>
     </View>
     <View style={styles.card}>
-    <Text style={styles.heading}>22 Karat Live Price</Text>  
+    <Text style={styles.heading}>22 Karat Live Price W/O GST</Text>  
       <Text style={styles.cost}>{rate22K}</Text>
     </View>
+    <View style={{flex: 1,marginTop: 24}}>
+    <View style={styles.inputContainer} > 
+        <Text style={styles.inputLabel}>Price:</Text>
+        <TextInput 
+          value={priceSet} 
+          onChangeText={(e) => setPrice(e)} 
+          style={styles.inputField} 
+          keyboardType="numeric"
+          placeholderTextColor={'grey'} 
+          placeholder="Enter Price for 24k W/O GST"
+         />
+      </View>
+    </View>
+    
     <View style={{flex: 1,marginTop: 24}}>
       <Text style={{textAlign: 'center', fontSize: 18, fontWeight: '700', color: colors.marron}}>Range when price should be change</Text>
       <View style={styles.container}>
@@ -89,6 +104,7 @@ function roundToTwoDecimalPlaces(number) {
           value={minRange} 
           onChangeText={(e) => setMinRange(e)} 
           style={styles.inputField} 
+          keyboardType="numeric"
           placeholderTextColor={'grey'} 
           placeholder="Enter Min Range" 
         />
@@ -99,6 +115,7 @@ function roundToTwoDecimalPlaces(number) {
           value={maxRange} 
           onChangeText={(e) => setMaxRange(e)} 
           style={styles.inputField} 
+          keyboardType="numeric"
           placeholderTextColor={'grey'} 
           placeholder="Enter Max Range"
          />

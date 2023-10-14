@@ -2,15 +2,15 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { colors } from '../theme'
 
-const Plans = () => {
+const SetBanner = () => {
   return (
     <View style={styles.container}>
-      <Text>Plans</Text>
+      <Text>Banner Images</Text>
     </View>
   )
 }
 
-export default Plans
+export default SetBanner
 
 const styles = StyleSheet.create({
   container: {

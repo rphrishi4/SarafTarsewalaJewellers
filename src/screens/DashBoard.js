@@ -5,6 +5,7 @@ import { colors } from '../theme';
 import axios from 'axios';
 import moment from 'moment';
 import 'moment-timezone'; 
+import TwoCards from '../components/TwoCards';
 
 const bannerData = [
   {
@@ -101,9 +102,9 @@ const savedates = (istTime) => {
   );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} >
       {/* Carousel */}
-      <Carousel
+      {/* <Carousel
         data={bannerData}
         renderItem={renderBanner}
         sliderWidth={width} // Adjust the slider width here
@@ -112,7 +113,7 @@ const savedates = (istTime) => {
         layoutCardOffset={`8`}
         autoplay={true}
         autoplayInterval={3000}
-      />
+      /> */}
       {/* Banners */}
       <View style={styles.bannersContainer}>
         {bannerData.map((item) => (
@@ -130,7 +131,9 @@ const savedates = (istTime) => {
     <Text style={styles.heading}>22 Karat Live Price</Text>  
       <Text style={styles.cost}>{rate22K} INR</Text>
     </View>
-      
+    <View style={[styles.sidecard, {marginBottom: 10}]}>
+   <TwoCards/>
+    </View>
     </ScrollView>
   );
 };
@@ -164,6 +167,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundShadow,
     borderRadius: 10,
     padding: 16,
+    margin: 16,
+    elevation: 3,
+  },
+  sidecard: {
+    backgroundColor: colors.backgroundShadow,
+    borderRadius: 10,
+    
     margin: 16,
     elevation: 3,
   },

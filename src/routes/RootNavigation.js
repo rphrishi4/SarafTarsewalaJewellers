@@ -9,7 +9,7 @@ import DrawerContent from './DrawerContent';
 import Login from '../screens/Login';
 import DashBoard from '../screens/DashBoard';
 import Category from '../screens/Category';
-import Plans from '../screens/Plans';
+import SetBanner from '../screens/SetBanner';
 import Setting from '../screens/Setting';
 import AboutUs from '../screens/AboutUs';
 import Contact from '../screens/Contact';
@@ -17,7 +17,6 @@ import Terms from '../screens/Terms';
 import Notification from '../screens/Notification';
 import BankDetails from '../screens/BankDetails';
 import { Image } from 'react-native';
-import GoldMarket from '../screens/GoldMarket';
 import CustomHeader from '../components/CustomHeader';
 import AdminPanelScreen from '../screens/AdminPanelScreen';
 
@@ -56,9 +55,7 @@ const HomeTabNavigator = () => {
     <Tab.Screen name="ContactUs" component={Contact} options={{ tabBarIcon : () =>{
       return <Image source={require('../assets/icons/information-circle.png')} style={{height: 20, width: 20}} />
     }}} /> 
-    {/* <Tab.Screen name="My Account" component={ProfileScreen} options={{ tabBarIcon : () =>{
-      return <Image source={require('../assets/icons/person-circle.png')} style={{height: 20, width: 20}} />
-    }}}/> */}
+   
   </Tab.Navigator>
 )}
 
@@ -75,7 +72,7 @@ return(
   }}
   >
     <Drawer.Screen name="Home" component={HomeTabNavigator} />
-    <Drawer.Screen name="Plans" component={Plans} />
+    <Drawer.Screen name="Banner" component={SetBanner} />
     <Drawer.Screen name="Settings" component={Setting} />
     <Drawer.Screen name="Admin" component={AdminPanelScreen} />
     <Drawer.Screen name="AboutUs" component={AboutUs} />
