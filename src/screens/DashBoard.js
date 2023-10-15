@@ -82,17 +82,17 @@ const getDatabase = async () => {
 
       <View style={styles.card}>
           <Text style={styles.heading}>24 Karat Live Price</Text>  
-          <Text style={styles.cost}>{autoPrice ? autoPrice : 'Loading...'} INR</Text>
+          <Text style={styles.cost}>{autoPrice && autoGst  ? (autoPrice*1.03).toFixed(2) : (autoPrice).toFixed(2)} INR</Text>
           <Text style={styles.gst}>{autoGst ? 'Inclusive of GST':'Exclusive of GST'}</Text>
     </View>
-    <View style={[styles.card, {marginBottom: 45}]}>
+    <View style={[styles.card, {marginBottom: 10}]}>
           <Text style={styles.heading}>22 Karat Live Price</Text>  
-          <Text style={styles.cost}>{autoPrice*0.916} INR</Text>
+          <Text style={styles.cost}>{autoPrice && autoGst  ? (autoPrice*1.03*0.916).toFixed(2) : (autoPrice*0.916).toFixed(2)} INR</Text>
           <Text style={styles.gst}>{autoGst ? 'Inclusive of GST':'Exclusive of GST'}</Text>
     </View>
     <View style={[styles.sidecard, {marginBottom: 10}]}>
       
-   <TwoCards/>
+   {/* <TwoCards/> */}
 
     </View>
     </ScrollView>
@@ -143,18 +143,18 @@ const styles = StyleSheet.create({
   heading:{
     textAlign: 'center',
     color: colors.DarkRed,
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: '800',
     paddingBottom: 18
   },
   cost:{
-    fontSize: 14,
+    fontSize: 20,
     textAlign: 'center',
     color: colors.DarkRed,
     fontWeight: '400'
   },
   gst:{
-    fontSize: 8,
+    fontSize: 10,
     textAlign: 'center',
     color: colors.DarkRed,
     fontWeight: '400'

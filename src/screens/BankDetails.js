@@ -29,17 +29,28 @@ class BankDetails extends Component {
     });
 
     return (
-      <TouchableOpacity onPress={this.toggleCard}>
-        <Animated.View style={[styles.card, { height: cardHeight }]}>
-        <Image source={require('../assets/icons/sbi-logo.png')} resizeMode='contain' style={{height: 50, width: 50}} />
-          <Text style={styles.cardTitle}>SBI</Text>
-          {expanded && <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image source={require('../assets/icons/upi-logo.png')} resizeMode={'contain'} style={{height: 34, width: 34}} />
-          <Text style={styles.cardDetails}>asfdmal@sbi</Text>
-          </View>
-          }
-        </Animated.View>
-      </TouchableOpacity>
+         <View style={margin=10}>
+          
+      <Image
+        source={{uri: "https://1000logos.net/wp-content/uploads/2021/06/HDFC-Bank-logo.jpg"}}
+        style={styles.logo}
+      />
+          <Text style={styles.cardTitle}>HDFC BANK Details</Text>
+
+          <Text style={styles.cardDetails}>Account Number: 59209765988799</Text>
+
+          <Text style={styles.cardDetails}>IFSC Code: HDFC0005697</Text>
+
+          <Text style={styles.cardDetails}>Address: Beside Band Of Baroda, 
+          <Text style={styles.cardDetails}>Va Plaza, Subhash Ward, Station Road</Text>
+ 
+</Text>
+
+          <Text style={styles.cardDetails}>Branch - Tirora 441911</Text> 
+
+
+         </View>
+          
     );
   }
 }
@@ -52,15 +63,28 @@ const styles = StyleSheet.create({
     margin: 16,
     elevation: 3,
   },
+  logo: {
+    marginLeft:10,
+    padding:10,
+    alignItems:'center',
+    width: '95%',
+    height: 200,
+    marginBottom: 20,
+    backgroundColor:'#FFF333',
+  },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 28,
+    textAlign:'center',
     fontWeight: 'bold',
-    color: colors.marron
+    color: colors.marron,
+   
+
   },
   cardDetails:{
-    fontSize: 14,
+    fontSize: 20,
     color: colors.marron,
-    paddingStart: 8
+    paddingStart: 18,
+    padding:10
   }
 });
 

@@ -2,7 +2,6 @@
 import React,{useState, useEffect} from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { colors } from '../theme';
-
 import firestore from '@react-native-firebase/firestore';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -42,12 +41,10 @@ const getDatabase = async () => {
 };
 
   return (
-    <ScrollView>
-  <View style={styles.container}>
+    <View style={styles.container}>
           <Card title={myData.MinTitle} content={ myData.Min +" INR"} />
           <Card title={myData.MaxTitle} content={ myData.Max +" INR"} />    
     </View>
-    </ScrollView> 
     
   );
 };
@@ -61,7 +58,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     backgroundColor: 'white',
-    margin: 6,
+    margin: 5,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
@@ -73,7 +70,6 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     textAlign: 'center',
-
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.DarkRed,
