@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import rootReducer from './src/redux/Reducer';
 import SplashScreen from './src/screens/SplashScreen';
+import { app } from '../config/firebase';
 
 const store = createStore(rootReducer);
 

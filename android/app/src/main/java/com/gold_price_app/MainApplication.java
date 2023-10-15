@@ -1,4 +1,4 @@
-package com.gold_price_app;
+package com.STJ;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

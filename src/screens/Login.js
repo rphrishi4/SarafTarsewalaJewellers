@@ -12,25 +12,48 @@ import { useDispatch } from 'react-redux';
 import { login } from '../redux/Actions';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../theme';
+import auth from '@react-native-firebase/auth';
+import { app } from '../config/firebase';
+
+
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch  = useDispatch()
   const navigation = useNavigation()
 
   const handleLogin = () => {
 
-    // Perform your authentication logic here
-    if (username == 'Admin' && password == 'ramhere') {
-      // Successful login, navigate to the next screen or perform actions
-      // Alert.alert('Success', 'Login successful!');
-      dispatch(login())
-      navigation.navigate('App')
-    } else {
-      // Failed login, show an error message
-      Alert.alert('Error', 'Invalid username or password.');
+    auth().signInWithEmailAndPassword(email,password)
+  .then(() => {
+    Alert.alert('Success', 'Login successful!');
+    console.log('User signed in!');
+    dispatch(login())
+    navigation.navigate('App')
+  })
+  .catch(error => {
+    if (error.code === 'auth/email-Not-in-use') {
+      console.log('That email/password is incorrrect!');
     }
+
+    if (error.code === 'auth/invalid-email') {
+      console.log('That email address is invalid!');
+    }
+
+    console.error(error);
+  });
+
+    // // Perform your authentication logic here
+    // if (email == 'Admin' && password == 'ramhere') {
+    //   // Successful login, navigate to the next screen or perform actions
+    //   // Alert.alert('Success', 'Login successful!');
+    //   dispatch(login())
+    //   navigation.navigate('App')
+    // } else {
+    //   // Failed login, show an error message
+    //   Alert.alert('Error', 'Invalid username or password.');
+    // }
   };
 
   return (
@@ -44,8 +67,9 @@ const Login = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Username"
-          onChangeText={(text) => setUsername(text)}
+          value={email}
+          placeholder="Email Id"
+          onChangeText={(text) => setEmail(text)}
           placeholderTextColor={'grey'}
         />
       </View>
@@ -54,6 +78,7 @@ const Login = () => {
         <TextInput
           style={styles.input}
           placeholder="Password"
+          value={password}
           placeholderTextColor={'grey'}
           secureTextEntry={true}
           onChangeText={(text) => setPassword(text)}

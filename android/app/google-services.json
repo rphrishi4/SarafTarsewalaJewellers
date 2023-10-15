@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "726168036110",
+    "project_id": "stj-gold-app",
+    "storage_bucket": "stj-gold-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726168036110:android:46019ffd566f326ef56d5f",
+        "android_client_info": {
+          "package_name": "com.STJ"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "726168036110-1pibmvtbp7t3oa35d5vonudn3nc6aer2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCW1ou4hUoVdrWxBk4I0-yYB9Qmz_VAIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "726168036110-1pibmvtbp7t3oa35d5vonudn3nc6aer2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
