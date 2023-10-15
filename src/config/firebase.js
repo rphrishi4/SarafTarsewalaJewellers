@@ -20,7 +20,7 @@ const RNfirebaseConfig = {
 
 
 const app = initializeApp(RNfirebaseConfig);
-// const db = firebase.firestore();
+const db = firebase.firestore();
 const auth = firebase.auth();
 
 export { app };

@@ -1,5 +1,10 @@
-import React from 'react';
+
+import React,{useState, useEffect} from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { colors } from '../theme';
+
+import firestore from '@react-native-firebase/firestore';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const data = [
   { id: '1', title: 'Weekly 22K Min', content: '50000' },
@@ -15,30 +20,48 @@ const Card = ({ title, content }) => (
 );
 
 const TwoCards = () => {
+
+  const [myData, setMyData] = useState('');
+
+useEffect(() => {
+  getDatabase();
+}, []);
+
+const getDatabase = async () => {
+  try {
+    const data = await firestore()
+      .collection('Rates')
+      .doc('MinMax')
+      .get();
+
+    setMyData(data._data);
+    // console.log(data._data);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={data}
-        numColumns={2} // Display two cards per row
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Card title={item.title} content={item.content} />
-        )}
-      />
+    <ScrollView>
+  <View style={styles.container}>
+          <Card title={myData.MinTitle} content={ myData.Min +" INR"} />
+          <Card title={myData.MaxTitle} content={ myData.Max +" INR"} />    
     </View>
+    </ScrollView> 
+    
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
+    borderRadius: 8,
     backgroundColor: '#3E3E3E', // Gold background color
   },
   card: {
     flex: 1,
     backgroundColor: 'white',
-    margin: 8,
+    margin: 6,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
@@ -49,14 +72,24 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   cardTitle: {
+    textAlign: 'center',
+
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFD700', // Gold color for titles
+    color: colors.DarkRed,
+
   },
   cardContent: {
+    
+    textAlign: 'center',
+    color: colors.DarkRed,
+    fontWeight: '400',
     fontSize: 16,
-    color: '#333',
+    
   },
 });
 
 export default TwoCards;
+
+
+

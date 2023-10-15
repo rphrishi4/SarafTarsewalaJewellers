@@ -6,6 +6,10 @@ import axios from 'axios';
 import moment from 'moment';
 import 'moment-timezone'; 
 import TwoCards from '../components/TwoCards';
+import firestore from '@react-native-firebase/firestore';
+
+
+
 
 const bannerData = [
   {
@@ -27,94 +31,47 @@ const imageH = imageW * 1.54
 
 const DashBoard = () => {
 
-  const [rate24K, setRate24K] = useState('');
-  const [rate22K, setRate22K] = useState('');
+  const [getPrice, getMyData] = useState('');
+  const [autoPrice, setPrice] = useState('');
+  const [autoGst, setGst] = useState('');
 
 
   useEffect(() => {
-    fetchData()
-  }, [])
-  
-//Round to Two Decimal Places
-function roundToTwoDecimalPlaces(number) {
-  return Math.round(number * 100) / 100;
-}
+    const priceRef = firestore().collection('Rates').doc('24k');
 
-  // Function to calculate 24K and 22K gold rates based on the live gold rate
-  const calculateRates = (liveGoldRate) => {
-    if (liveGoldRate !== '') {
-      const liveRate =  roundToTwoDecimalPlaces( parseFloat(1/liveGoldRate.XAU)*(liveGoldRate.INR)*(0.03215)*(10)*(1.15));
+    const unsubscribe = priceRef.onSnapshot((snapshot) => {
+      const newPrice = snapshot.data()?.NoGst24k;
+      const newGst = snapshot.data()?.GST;
+      setPrice(newPrice);
+      setGst(newGst);
 
-      // Calculate the rate for 24 karat gold
-      const rate24KFloat = liveRate;
-      setRate24K(rate24KFloat.toString());
+      console.log("Price updated automatically: "+newPrice);
+    });
 
-      // Calculate the rate for 22 karat gold (you can adjust this formula as needed)
-      const rate22KFloat = (liveRate * 0.9167).toFixed(2);
-      setRate22K(rate22KFloat.toString());
-    } else {
-      // Handle empty or invalid input
-      setRate24K('');
-      setRate22K('');
-    }
-  };
+    return () => unsubscribe();
+  }, []);
 
-  const fetchData = () =>{
-    // Define the API URL
-    const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key=d12a0e274efd07628b5849b95acd4963&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
+useEffect(() => {
+  getDatabase();
+}, []);
 
+const getDatabase = async () => {
+  try {
+      const NoGst24 = await firestore()
+      .collection('Rates')
+      .doc('24k')
+      .get();
 
-    try {
-      axios
-      .get(apiUrl)
-      .then((response) => {
-        // console.log('res', response?.data);
-        calculateRates(response?.data?.rates)
-        savedates(response)
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-    } catch (error) {
-      ToastAndroid.show('Api error')
-    }
+      getMyData(NoGst24._data);
+      console.log(NoGst24._data); 
+  } catch (err) {
+    console.log(err); 
+  }
 };
 
-//IST TIME CALCULATION
-const unixTimestampToIST = (unixTimestamp) => {
-  // Define the timezone (IST)
-  const timezone = 'Asia/Kolkata';
-
-  // Use moment-timezone to convert the timestamp to IST
-  const istTime = moment(unixTimestamp * 1000).tz(timezone);
-
-  // Format the IST time as a string
-  return istTime.format('YYYY-MM-DD HH:mm:ss');
-};
- 
-
-const savedates = (istTime) => {
-  const showTime = unixTimestampToIST(istTime.timestamp);
-};
-
-  const renderBanner = ({ item }) => (
-    <Image source={{ uri: item.imageUrl }} style={styles.bannerImage} />
-  );
 
   return (
     <ScrollView style={styles.container} >
-      {/* Carousel */}
-      {/* <Carousel
-        data={bannerData}
-        renderItem={renderBanner}
-        sliderWidth={width} // Adjust the slider width here
-        itemWidth={width - 20}   // Adjust the item width here
-        layout={'tinder'}
-        layoutCardOffset={`8`}
-        autoplay={true}
-        autoplayInterval={3000}
-      /> */}
-      {/* Banners */}
       <View style={styles.bannersContainer}>
         {bannerData.map((item) => (
           <View key={item.id} style={styles.bannerItem}>
@@ -124,15 +81,19 @@ const savedates = (istTime) => {
       </View>
 
       <View style={styles.card}>
-      <Text style={styles.heading}>24 Karat Live Price</Text>  
-      <Text style={styles.cost}>{rate24K} INR</Text>
+          <Text style={styles.heading}>24 Karat Live Price</Text>  
+          <Text style={styles.cost}>{autoPrice ? autoPrice : 'Loading...'} INR</Text>
+          <Text style={styles.gst}>{autoGst ? 'Inclusive of GST':'Exclusive of GST'}</Text>
     </View>
     <View style={[styles.card, {marginBottom: 45}]}>
-    <Text style={styles.heading}>22 Karat Live Price</Text>  
-      <Text style={styles.cost}>{rate22K} INR</Text>
+          <Text style={styles.heading}>22 Karat Live Price</Text>  
+          <Text style={styles.cost}>{autoPrice*0.916} INR</Text>
+          <Text style={styles.gst}>{autoGst ? 'Inclusive of GST':'Exclusive of GST'}</Text>
     </View>
     <View style={[styles.sidecard, {marginBottom: 10}]}>
+      
    <TwoCards/>
+
     </View>
     </ScrollView>
   );
@@ -152,7 +113,7 @@ const styles = StyleSheet.create({
   },
   bannerItem: {
     width: '100%',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   bannerImage: {
     width: '100%',
@@ -167,15 +128,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundShadow,
     borderRadius: 10,
     padding: 16,
-    margin: 16,
+    margin: 8,
     elevation: 3,
   },
   sidecard: {
     backgroundColor: colors.backgroundShadow,
     borderRadius: 10,
-    
-    margin: 16,
+    margin: 4,
     elevation: 3,
+    paddingLeft:10,
+    paddingRight:10,
+
   },
   heading:{
     textAlign: 'center',
@@ -186,6 +149,12 @@ const styles = StyleSheet.create({
   },
   cost:{
     fontSize: 14,
+    textAlign: 'center',
+    color: colors.DarkRed,
+    fontWeight: '400'
+  },
+  gst:{
+    fontSize: 8,
     textAlign: 'center',
     color: colors.DarkRed,
     fontWeight: '400'

@@ -1,26 +1,50 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ToastAndroid } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ToastAndroid, Alert } from 'react-native'
 import React,{useState, useEffect} from 'react'
 import { colors } from '../theme'
 import { ScrollView } from 'react-native-gesture-handler';
 import CustomCheckbox from '../components/CustomCheckbox';
 import axios from 'axios';
 
+import firestore from '@react-native-firebase/firestore';
+
+
+
 const AdminPanelScreen = () => {
 
   const [minRange, setMinRange] = useState('');
   const [maxRange, setMaxRange] = useState('');
   const [priceSet, setPrice] = useState('');
-  const [check, setCheck] = useState(false)
+  const [gstcheck, setCheck] = useState(false)
   const [rate24K, setRate24K] = useState('');
   const [rate22K, setRate22K] = useState('');
   // const [liveGoldRate, setLiveGoldRate] = useState('');
   // const [data, setData] = useState()
+  
+// Reference to the Firestore collection and document
+const documentRef = firestore().collection('Rates').doc('24k');
+  
 
   useEffect(() => {
     fetchData()
   }, [])
   
+  const updatedData = {
+    NoGst24k: priceSet,
+    GST:gstcheck,
+  };
+  
+  const handleUpdate = () => {
+    // Implement the update logic here
+  
+  try {
+    documentRef.update(updatedData);
 
+    console.log('24K Price updated successfully to: '+priceSet+' GST: '+gstcheck);
+    Alert.alert('24K Price updated successfully to: '+priceSet+' GST: '+gstcheck);
+    } catch (error) {
+    console.error('Error updating Price:', error);
+  }
+};
 
   const fetchData = () =>{
 // Define the API URL
@@ -122,12 +146,12 @@ function roundToTwoDecimalPlaces(number) {
       </View>
     </View>
     </View>
-    <CustomCheckbox title="Include GST" checked={check} onPress={handleCheckbox} />
+    <CustomCheckbox title="Include GST" checked={gstcheck} onPress={handleCheckbox} />
     <TouchableOpacity style={{marginTop: 24}} onPress={() => {
         
         }}>
       <View style={styles.button}>
-        <Text style={styles.buttonText}>Submit</Text>
+        <Text style={styles.buttonText }  onPress={handleUpdate} >Submit</Text>
       </View>
     </TouchableOpacity>
     </ScrollView>

@@ -21,7 +21,8 @@ const SplashScreen = () => {
     return (
       <View style={styles.container}>
         <Image
-          source={{uri: "https://i.pinimg.com/originals/eb/d1/b0/ebd1b0026b23af3ec41263de660f410e.jpg"}}
+        //<Image source={require('../assets/icons/information-circle.png')} style={{height: 20, width: 20}}
+          source={{uri: "https://i.ibb.co/gR0MjDF/STJ.jpg"}}
           style={styles.image}
         />
       </View>
@@ -39,8 +40,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundShadow
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 400,
+    height: 400,
     resizeMode: 'cover',
   },
 });

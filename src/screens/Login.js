@@ -59,7 +59,7 @@ const Login = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={{uri: "https://i.pinimg.com/originals/eb/d1/b0/ebd1b0026b23af3ec41263de660f410e.jpg"}}
+        source={{uri: "https://i.ibb.co/gR0MjDF/STJ.jpg"}}
         style={styles.logo}
       />
       <Text style={styles.title}>Login</Text>
@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundShadow,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 200,
     marginBottom: 20,
   },
   title: {
