@@ -40,6 +40,13 @@ const CustomDrawer = (props) => {
         value={isEnabled}
       />
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => props.navigation.navigate('DashBoard')}
+      >
+        <Text style={styles.drawerItemText}>Dashboard</Text>
+      </TouchableOpacity>
       
       <TouchableOpacity
         style={styles.drawerItem}
@@ -93,7 +100,9 @@ const CustomDrawer = (props) => {
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity> 
       </>
-      : <TouchableOpacity onPress={() => {
+      : 
+      <View>
+        <TouchableOpacity onPress={() => {
         props.navigation.closeDrawer()
         props.navigation.navigate('Auth')
         }}>
@@ -101,6 +110,33 @@ const CustomDrawer = (props) => {
         <Text style={styles.buttonText}>Login</Text>
       </View>
     </TouchableOpacity>
+
+    <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => props.navigation.navigate('DashBoard')}
+      >
+        <Text style={styles.drawerItemText}>Dashboard</Text>
+      </TouchableOpacity>
+
+    <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => props.navigation.navigate('AboutUs')}
+      >
+        <Text style={styles.drawerItemText}>About Us</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => props.navigation.navigate('Terms')}
+      >
+        <Text style={styles.drawerItemText}>Terms & Conditions</Text>
+      </TouchableOpacity>
+
+      
+
+    </View>
+
+    
     }
     </DrawerContentScrollView>
   );

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Image } from 'react-native';
 import { colors } from '../theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 class BankDetails extends Component {
   constructor(props) {
@@ -29,12 +30,14 @@ class BankDetails extends Component {
     });
 
     return (
+      <SafeAreaView>
          <View style={margin=10}>
-          
+          <View style={styles.containerLogo}>
       <Image
-        source={{uri: "https://1000logos.net/wp-content/uploads/2021/06/HDFC-Bank-logo.jpg"}}
+        source={{uri: "https://imageupload.io/ib/9LRrgBgCtR5B9Mc_1697553835.png"}}
         style={styles.logo}
       />
+      </View>
           <Text style={styles.cardTitle}>HDFC BANK Details</Text>
 
           <Text style={styles.cardDetails}>Account Number: 59209765988799</Text>
@@ -47,9 +50,8 @@ class BankDetails extends Component {
 </Text>
 
           <Text style={styles.cardDetails}>Branch - Tirora 441911</Text> 
-
-
          </View>
+         </SafeAreaView>
           
     );
   }
@@ -64,13 +66,20 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   logo: {
-    marginLeft:10,
+    margin:10,
     padding:10,
     alignItems:'center',
-    width: '95%',
-    height: 200,
-    marginBottom: 20,
-    backgroundColor:'#FFF333',
+    width: '100%',
+    height: '100%',
+    marginBottom: 5,
+  },
+  containerLogo: {
+    margin:10,
+    padding:10,
+    alignItems:'center',
+    width: '100%',
+    height: '60%',
+    marginBottom: 5,
   },
   cardTitle: {
     fontSize: 28,

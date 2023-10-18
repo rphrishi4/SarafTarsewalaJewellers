@@ -59,7 +59,7 @@ const Login = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={{uri: "https://i.ibb.co/gR0MjDF/STJ.jpg"}}
+        source={require('../assets/Images/STJ_logo.png')}
         style={styles.logo}
       />
       <Text style={styles.title}>Login</Text>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.backgroundShadow,
+    backgroundColor:'#a5202f',
   },
   logo: {
     width: 200,
@@ -108,14 +108,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: colors.lightRed
+    color: '#FFFFFF'
   },
   inputContainer: {
     width: '80%',
+    borderWidth:10,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+    backgroundColor:'#FFFFFF',
   },
   input: {
     height: 40,

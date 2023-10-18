@@ -8,6 +8,8 @@ import ProfileScreen from '../screens/Profile';
 import DrawerContent from './DrawerContent';
 import Login from '../screens/Login';
 import DashBoard from '../screens/DashBoard';
+import DashBoard2 from '../screens/DashBoard2';
+
 import Category from '../screens/Category';
 import SetBanner from '../screens/SetBanner';
 import Setting from '../screens/Setting';
@@ -44,16 +46,16 @@ const HomeTabNavigator = () => {
   // }
   headerShown: false
   }}>
-    <Tab.Screen name="DashBoard" component={DashBoard} options={{ tabBarIcon : () =>{
-      return <Image source={require('../assets/icons/home.png')} style={{height: 16, width: 16}} />
+    <Tab.Screen name="DashBoard" component={DashBoard2} options={{ tabBarIcon : () =>{
+      return <Image source={require('../assets/icons/home.png')} style={{height: 30, width: 30}} />
     }
     }} />
     <Tab.Screen name="BankDetail" component={BankDetails} options={{ tabBarIcon : () =>{
-      return <Image source={require('../assets/icons/pricetags.png')} style={{height: 20, width: 20}} />
+      return <Image source={require('../assets/icons/pricetags.png')} style={{height: 30, width: 30}} />
     }
     }} />
     <Tab.Screen name="ContactUs" component={Contact} options={{ tabBarIcon : () =>{
-      return <Image source={require('../assets/icons/information-circle.png')} style={{height: 20, width: 20}} />
+      return <Image source={require('../assets/icons/information-circle.png')} style={{height: 30, width: 30}} />
     }}} /> 
    
   </Tab.Navigator>
@@ -71,7 +73,7 @@ return(
   } 
   }}
   >
-    <Drawer.Screen name="Home" component={HomeTabNavigator} />
+    <Drawer.Screen name="Saraf Tarsewala Jewellers" component={HomeTabNavigator} />
     <Drawer.Screen name="Banner" component={SetBanner} />
     <Drawer.Screen name="Settings" component={Setting} />
     <Drawer.Screen name="Admin" component={AdminPanelScreen} />

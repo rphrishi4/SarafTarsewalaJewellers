@@ -22,7 +22,7 @@ const SplashScreen = () => {
       <View style={styles.container}>
         <Image
         //<Image source={require('../assets/icons/information-circle.png')} style={{height: 20, width: 20}}
-          source={{uri: "https://i.ibb.co/gR0MjDF/STJ.jpg"}}
+          source={require('../assets/Images/STJ_logo.png')}
           style={styles.image}
         />
       </View>
@@ -37,11 +37,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.backgroundShadow
+    backgroundColor:'#a5202f',
   },
   image: {
-    width: 400,
-    height: 400,
+    width: '80%',
+    height: '40%',
     resizeMode: 'cover',
   },
 });

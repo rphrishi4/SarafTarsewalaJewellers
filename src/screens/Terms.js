@@ -1,9 +1,16 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import React from 'react'
 import { colors } from '../theme'
+import Slider from 'react-native-slider'; //uninstall
+
+
 
 const Terms = () => {
   return (
+    <ScrollView>
+
+    <View style={styles.Backgroundcontainer}>
+      
     <View style={styles.container}>
       <Text style={styles.heading}>Terms and Conditions</Text>
 
@@ -51,11 +58,18 @@ const Terms = () => {
         e. Use the App to promote or sell products or services without our prior written consent.
       </Text>
     </View>
+    
+    </View>
+    
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    padding: 16,
+  },
+  Backgroundcontainer: {
     padding: 16,
   },
   heading: {
