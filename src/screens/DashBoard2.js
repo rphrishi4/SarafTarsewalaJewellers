@@ -128,7 +128,7 @@ const DashBoard2 = () => {
       getb2(img_b2);
 
 
-      console.log(APIKEY);
+      console.log('In Datbase Function'+APIKEY);
       //fetchAPIData();
       // console.log("Manual Price: "+newPrice);
       // console.log("GST FLAG: "+newGst);
@@ -202,7 +202,7 @@ const DashBoard2 = () => {
     setIsRefreshing(true);
 
     fetchAPIData();
-    FinalPriceCalculate();
+    //FinalPriceCalculate();
 
     // After data is fetched or updated, set isRefreshing to false
     setTimeout(() => {
@@ -222,7 +222,7 @@ const DashBoard2 = () => {
     const flagTimeout = setTimeout(() => {
       console.log('In Set TImeout')
       setFlagAutoPrice(false);
-    }, 60000);
+    }, 600000);
 
     // Clean up the flag timeout to avoid memory leaks
     return () => clearTimeout(flagTimeout);
@@ -288,10 +288,9 @@ const DashBoard2 = () => {
       const liveRate = parseFloat(1 / liveGoldRate.XAU) * (liveGoldRate.INR) * (0.03215) * (10) * (1.15);
       // Calculate the rate for 24 karat gold
       console.log('In Calculate Rate Function:  ' + liveRate);
+      setRate24K(liveRate.toString());
+      console.log('In calculate Rate Function (liverate): '+liveRate)
       FinalPriceCalculate(liveRate);
-      const rate24KFloat = (liveRate * 1).toFixed(2);
-      setRate24K(rate24KFloat.toString());
-
     } else {       // Handle empty or invalid input
       setRate24K('');
 
@@ -304,25 +303,30 @@ const DashBoard2 = () => {
     return Math.round(number / 10) * 10;
   }
 
-  const FinalPriceCalculate = (FinalPrice) => {
-    console.log('In Final Price Calculate Function');
+  function FinalPriceCalculate(rate){
+    let FinalPrice;
+    console.log('In Final Price Calculate Function : '+rate);
     console.log(formattedDateTime);
     // getdatafromdatabase();
     if (flagGst && flagAutoPrice) { //GST True and Surcharge True
-      FinalPrice = ((parseInt(rate24K, 10) * 1.03) + parseInt(surcharge, 10));
-      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(True) :' + flagGst + ' AutoPrice (True): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
+      FinalPrice = ((parseInt(rate, 10) * 1.03) + parseInt(surcharge, 10));
+      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(True) :' 
+      + flagGst + ' AutoPrice (True): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
     }
     else if ((flagGst == true) && (flagAutoPrice == false)) { //GST True and Surcharge False
       FinalPrice = (1.03 * parseInt(surcharge, 10));
-      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(True) :' + flagGst + ' AutoPrice (False): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
+      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(True) :' 
+      + flagGst + ' AutoPrice (False): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
     }
     else if ((flagGst == false) && (flagAutoPrice == true)) { //GST False and Surcharge True
-      FinalPrice = (parseInt(rate24K, 10) + parseInt(surcharge, 10));
-      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(false) :' + flagGst + ' AutoPrice (True): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
+      FinalPrice = (parseInt(rate, 10) + parseInt(surcharge, 10));
+      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(false) :' 
+      + flagGst + ' AutoPrice (True): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
     }
     else if (!(flagGst || flagAutoPrice)) { //GST False and Surcharge False
       FinalPrice = parseInt(surcharge, 10);
-      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(False) :' + flagGst + ' AutoPrice (False): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
+      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(False) :' 
+      + flagGst + ' AutoPrice (False): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
     }
     else {
       FinalPrice = manualPrice;
@@ -525,6 +529,7 @@ const styles = StyleSheet.create({
   mainView: {
     flex: 1,
     position: 'relative', // Required for absolute positioning
+    //backgroundColor:colors.marron,
   },
   bisImage: {
     alignSelf: 'center',
