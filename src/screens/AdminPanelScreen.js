@@ -22,7 +22,8 @@ const AdminPanelScreen = () => {
   const [finalPrice, setFinalPrice] = useState('')
   const [autoInterval, setautoInterval] = useState('')
   const [isRefreshing, setIsRefreshing] = useState(false);  
-  const [API_KEY, setAPIKEY] = useState(false);  
+  const [bol_API, setbol_API] = useState(false);  
+  const [API_KEY, setAPIKEY] = useState('');  
 
 
   
@@ -40,19 +41,49 @@ const handleRefresh = () => {
 };
   
 
+function getdatafromdatabase(){
+  const priceRef = firestore().collection('Rates').doc('24k');
+
+const unsubscribe = priceRef.onSnapshot((snapshot) => {
+  //Fetch from DB
+  const newGst = snapshot.data()?.GST;
+  const newautoPrice = snapshot.data()?.AutoPrice;
+  const newSurcharge = snapshot.data()?.Surcharge;
+  const APIKEY=snapshot.data()?.ApiKey
+
+
+  //Setting state of Variables
+  // setGst(newGst);
+  // setFlagAutoPrice(newautoPrice);
+  // setSurcharge(newSurcharge);
+
+
+
+  console.log('In Get data from Database  :'+APIKEY);
+  
+});
+return () => unsubscribe();
+}
+
 //Date Time Calculation
 const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
-    }, 1000); // Update every 1 second
+    }, 10000); // Update every 1 second
 
     return () => clearInterval(interval);
   }, []);
 
-  const formattedDateTime = currentDateTime.toLocaleString();
-
+  const formattedDateTime = currentDateTime.toLocaleString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: '2-digit', 
+    hour: '2-digit', 
+    minute: '2-digit',
+   
+  }) 
   
   function roundToNearestTen(number) {
     // Use Math.round to round the number to the nearest 10
@@ -107,7 +138,8 @@ else{
 };
 
 const fetchData = () =>{
-    
+    console.log('In Fetch Data Function: '+API_KEY);
+    const API_KEY='ca5449361f0d6e1aea724534e1a73e5c';
     const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key='+API_KEY+'&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
    try {
   axios
@@ -126,48 +158,11 @@ const fetchData = () =>{
 
 
 useEffect(() => {
+  getdatafromdatabase()
   fetchData()
 }, [])
 
-// useEffect(() => {
-//   // Define a function to fetch data from the API
-  
-//   const fetchAPIData = () =>{
-//     const API_KEY= 'e6bee55a152e92cb6deab7a0532e8ad5'
-//     const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key='+API_KEY+'&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
-//        try {
-//       axios
-//       .get(apiUrl)
-//       .then((response) => {
-//         console.log('res', response.data);
-        
-//         calculateRates(response.data?.rates)
-//       })
-//       .catch((error) => {
-//         console.error('Error fetching data:', error);
-//       });
-//         } catch (error) {
-//       ToastAndroid.show('Api error')
-//          } 
-//     };
 
-  
-//     //Initial Fetch
-//     fetchAPIData();
-    
-//   // Set an interval to fetch data every 1 minute (adjust the interval as needed)
-//   const fetchInterval = setInterval(() => {
-//     fetchAPIData();
-//   }, 60000000); // 10 minute in milliseconds
-
-//   // Clean up the interval when the component unmounts to avoid memory leaks
-//   return () => {
-//     clearInterval(fetchInterval);
-//   };
-// }, []);
-
-  // Function to calculate 24K and 22K gold rates based on the live gold rate
- 
   const calculateRates = (liveGoldRate) => {
     if (liveGoldRate !== '') {
       const liveRate = parseFloat(1/liveGoldRate.XAU)*(liveGoldRate.INR)*(0.03215)*(10)*(1.15);
@@ -181,10 +176,15 @@ useEffect(() => {
     }
   };
   
+   // GST Checkbox
+   const handleAPICheckbox = () =>{
+    setbol_API( d => !d)
+  }
+
   // GST Checkbox
   const handleGSTCheckbox = () =>{
     setGSTCheck( e => !e)
-  }
+  } 
   
   //Auto Price checkbox
   const handleAutoCheckbox = () =>{
@@ -287,49 +287,31 @@ useEffect(() => {
     </TouchableOpacity>
     <Text style={styles.inputLabel}>Final Price (Round-off): {finalPrice}</Text>
     
-    {/* Minimum Max Implementation
-    <View style={{flex: 1,marginTop: 24}}>
-      <Text style={{textAlign: 'center', fontSize: 18, fontWeight: '700', color: colors.marron}}>Range when price should be change</Text>
-      <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Min:</Text>
-        <TextInput 
-          value={minRange} 
-          onChangeText={(e) => setMinRange(e)} 
-          style={styles.inputField} 
-          keyboardType="numeric"
-          placeholderTextColor={'grey'} 
-          placeholder="Enter Min Range" 
-        />
-      </View>
-      <View style={styles.inputContainer}> 
-        <Text style={styles.inputLabel}>Max:</Text>
-        <TextInput 
-          value={maxRange} 
-          onChangeText={(e) => setMaxRange(e)} 
-          style={styles.inputField} 
-          keyboardType="numeric"
-          placeholderTextColor={'grey'} 
-          placeholder="Enter Max Range"
-         />
-      </View>
-    </View>
-    </View> */}
 {/* API_KEY */}
-      <View style={{flex: 1,marginTop: 24}}>
-      <Text style={{textAlign: 'center', fontSize: 18, fontWeight: '700', color: colors.marron}}>Enter API KEY IF CHANGED</Text>
-      <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput 
-          value={API_KEY} 
-          onChangeText={(e) => setAPIKEY(e)} 
-          style={styles.inputField} 
-          placeholderTextColor={'grey'} 
-          placeholder="Enter API KEY" 
-        />
-      </View>
+<View>
+  
+    <View style={{flex: 1,flexDirection:'row',margin:8}} >
+    <CustomCheckbox  checked={bol_API} onPress={handleAPICheckbox} />
+    <Text style={{marginLeft: 10,fontSize: 18, fontWeight: '700', color: colors.marron}}>Change API Key</Text>
     </View>
-    </View> 
+        {bol_API?
+        <View style={{flex: 1,marginTop: 24}}>        
+        <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <TextInput 
+            value={API_KEY} 
+            onChangeText={(e) => setAPIKEY(e)} 
+            style={styles.inputField} 
+            placeholderTextColor={'grey'} 
+            placeholder="Enter API KEY" 
+          />
+        </View>
+      </View>
+      </View> 
+        : ''}
+    
+</View>
+      
 
     {/* Submit Button */}
     <TouchableOpacity style={{marginTop: 24}} >
@@ -340,6 +322,8 @@ useEffect(() => {
           <View style={styles.iconContainerCenter}>
           <Text style={styles.dateTimeText}>{formattedDateTime}</Text>
           </View>
+
+          
     </ScrollView>
           
     </SafeAreaView>
@@ -436,6 +420,7 @@ const styles = StyleSheet.create({
   }, 
   dateTimeText: {
     fontSize: 16,
+    color:'black',
     fontWeight: 'bold',
   },
 })
