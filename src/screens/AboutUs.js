@@ -1,19 +1,20 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+// import ModalImage from 'react-native-modal-image';
 
 const AboutUs = () => {
   return (
     <ScrollView contentContainerStyle={styles.containerScroll}>
       <View style={styles.container}>
-        <Text style={styles.heading}>About Us</Text>
+        <Text style={styles.heading}>About Us</Text> 
         <Text style={styles.paragraph}>
           Saraf Tarsewala Jewellers in Tirora is one of the leading businesses in the Jewellery Showrooms. </Text>
           <Text style={styles.paragraph}>
           We are known for our best in Class Jewellery Showrooms consists of Ear-rings, Pendant, Necklace and much more.
           We help you find the ideal jewellery for every event within your price range.
         </Text>
-        
+         
         {/* Add more text content as needed */}
         <Image source={{ uri: 'https://lh5.googleusercontent.com/p/AF1QipOvT9or-bEQm_8egOBQ6EK54sf1BQ9dIM3TvULf=s599-p-k-no' }} style={styles.image} />
         <Image source={{ uri: 'https://lh3.googleusercontent.com/p/AF1QipPP5ZpiJVYcXsUySZsct0MmDfPDsQNbHzH3aNz1=w960-h960-n-o-v1' }} style={styles.image} />

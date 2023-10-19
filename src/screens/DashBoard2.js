@@ -41,32 +41,89 @@ const DashBoard2 = () => {
   const [flagAutoPrice, setFlagAutoPrice] = useState('');
   const [surcharge, setSurcharge] = useState('');
   const [rate24K, setRate24K] = useState('');
-  const [phNumber,setPhNumber]= useState('+919922022664')
+  const [APIKEY, getAPIKEY] = useState('');
+
+  
+  const [phoneNumber, setphoneNumber] = useState('+919922022664');
+
 
 
      
   
-  const sendMessageOnWhatsApp = (phNumber, message) => {
-    const whatsappURL = `https://wa.me/${phNumber}?text=${encodeURIComponent(message)}`;
+const transparent = 'rgba(0, 0, 0, 0.5)';
+
+  function popUp() {
+    const [popoup, setPopup] = useState(true);
+    
+    return (
+        <Modal visible={popoup}
+            animationType="slide"
+            transparent={true}
+
+        >
+            <View style={{
+                flex: 1, 
+                justifyContent: "center",
+                // width: '70%', height: '50%',
+                alignItems: "center",
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            }}>
+                <View
+                    style={{
+                        backgroundColor: 'white',
+                        padding: 3,
+                        width: '70%',
+                        height: '70%',
+                        borderRadius: 10,
+                    }}>
+                    <TouchableOpacity onPress={( ) => setPopup(false) & setIsRefreshing(true) & handleRefresh()  } >
+                        <Image 
+                            source={{ uri: 'https://icons.iconarchive.com/icons/iconsmind/outline/512/Close-icon.png' }}
+                            style={styles.closeIconPopupRight}
+                        />
+                    </TouchableOpacity>
+                    <Image
+                        source={require('../assets/Images/popup.png')}
+                        style={{
+                            flex: 0, justifyContent: "center", //position: 'absolute',
+                            width: '100%', height: '100%',
+                            zIndex: -1,
+                            borderRadius: 10,
+                            // alignItems: "center",
+                        }}
+                    />
+
+                </View>
+            </View>
+
+        </Modal>
+    )
+}
+
+
+  const sendMessageOnWhatsApp = (phoneNumber, message) => {
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     Linking.openURL(whatsappURL)
       .then(() => {
-        console.log(`Opening WhatsApp with message to ${phNumber}`);
+        console.log(`Opening WhatsApp with message to ${phoneNumber}`);
       })
       .catch((error) => {
         console.error(`Error opening WhatsApp: ${error}`);
       });
   }
 
-  const initiateCall = (phNumber) => {
-    const phoneURL = `tel:${phNumber}`;
+  const initiateCall = (phoneNumber) => {
+    const phoneURL = `tel:${phoneNumber}`;
     Linking.openURL(phoneURL)
       .then(() => {
-        console.log(`Initiating call to ${phNumber}`);
+        console.log(`Initiating call to ${phoneNumber}`);
       })
       .catch((error) => {
         console.error(`Error initiating call: ${error}`);
       });
   };
+
+  
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -91,6 +148,7 @@ const DashBoard2 = () => {
       const newautoPrice = snapshot.data()?.AutoPrice;
       const newSurcharge = snapshot.data()?.Surcharge;
       const newAutoInterval = snapshot.data()?.AutoInterval;
+      const API_KEY=snapshot.data()?.ApiKey
 
 
       //Setting state of Variables
@@ -98,16 +156,18 @@ const DashBoard2 = () => {
       setGst(newGst);
       setFlagAutoPrice(newautoPrice);
       setSurcharge(newSurcharge);
-      setAutoInterval(newAutoInterval); 
+      setAutoInterval(newAutoInterval);
+      getAPIKEY(API_KEY);
 
     
-
-      console.log("Manual Price: "+newPrice);
-      console.log("GST FLAG: "+newGst);
-      console.log("AutoPrice Flag: "+newautoPrice);
-      console.log("If auto flag TRUE then Surcharge else manual price "+newSurcharge);
-      console.log("If auto flag TRUE then Interval "+newAutoInterval);
-      console.log("--------------------------------------");
+      console.log(APIKEY);
+      //fetchAPIData();
+      // console.log("Manual Price: "+newPrice);
+      // console.log("GST FLAG: "+newGst);
+      // console.log("AutoPrice Flag: "+newautoPrice);
+      // console.log("If auto flag TRUE then Surcharge else manual price "+newSurcharge);
+      // console.log("If auto flag TRUE then Interval "+newAutoInterval);
+      // console.log("--------------------------------------");
       
     });
     return () => unsubscribe();
@@ -146,12 +206,19 @@ const [currentDateTime, setCurrentDateTime] = useState(new Date());
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
-    }, 1000); // Update every 1 second
+    }, 60000); // Update every 1 minute
 
     return () => clearInterval(interval);
   }, []);
 
-  const formattedDateTime = currentDateTime.toLocaleString();
+  const formattedDateTime = currentDateTime.toLocaleString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: '2-digit', 
+    hour: '2-digit', 
+    minute: '2-digit',
+   
+  })
 
 
 //Public call when auto price is Set to TRUE
@@ -160,7 +227,7 @@ useEffect(() => {
   // Define a function to fetch data from the API
   
   const fetchAPIData = () =>{
-    const API_KEY= '4f6cd11a68b4cdc7296f6e8a396fe95c'
+     const API_KEY= 'ea1a3fdd7d0180d82722e580e8c611c9'
     const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key='+API_KEY+'&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
        try {
       axios
@@ -185,7 +252,7 @@ useEffect(() => {
   // Set an interval to fetch data every 1 minute (adjust the interval as needed)
   const fetchInterval = setInterval(() => {
     fetchAPIData();
-  }, 6000000); // 10 minute in milliseconds
+  }, 60000); // 10 minute in milliseconds
 
   // Clean up the interval when the component unmounts to avoid memory leaks
   return () => {
@@ -217,7 +284,7 @@ function roundToNearestTen(number) {
 
 const FinalPriceCalculate=(FinalPrice)=>{
        console.log('In Final Price Calculate Function');
-
+        console.log(formattedDateTime);
  // getdatafromdatabase();
 if(flagGst && flagAutoPrice){ //GST True and Surcharge True
   FinalPrice=((parseInt(rate24K, 10)*1.03)+ parseInt(surcharge, 10));
@@ -267,7 +334,7 @@ setAutoPrice(roundToNearestTen(parseInt(FinalPrice, 10)));
         decelerationRate="fast"
         autoplayInterval={5000}
       />
-
+    
       <View style={styles.card}>
         
           <Text style={styles.heading}>24 Karat Live Price</Text>  
@@ -281,28 +348,26 @@ setAutoPrice(roundToNearestTen(parseInt(FinalPrice, 10)));
 
           {/* <Text style={styles.gst}>{autoGst ? 'Inclusive of GST':'Exclusive of GST'}</Text> */}
     </View>
-    <View style={[styles.card, {marginBottom: 10}]}>
+    <View >
     <Image             
             source={{ uri: 'https://imageupload.io/ib/ebBS7BEMPK93nzz_1697559903.png' }}
             style={[styles.bisImage]}
       />
       
     </View>
-    {/* <View style={[styles.sidecard, {marginBottom: 10}]}>
-     <TwoCards/>  
-
-     <View>
-    <Image             
-            source={{ uri: 'https://imageupload.io/ib/ebBS7BEMPK93nzz_1697559903.png' }}
-            style={[styles.bisImage]}
-      />
+    {/* <View style={[styles.sidecard, {marginBottom: 10}]}> */}
       
-    </View> 
-     {ContinuousHorizontalTextScroll()} 
-      </View> */}
+        {/* <TwoCards/> */}
+
+        
+      {/* </View> */}
+      <View>
+      {ContinuousHorizontalTextScroll()}
+
+      </View>
     </ScrollView>
           
-            <TouchableOpacity onPress={() => initiateCall(phNumber)}style={styles.iconContainerLeft}>
+            <TouchableOpacity onPress={() => initiateCall(phoneNumber)}style={styles.iconContainerLeft}>
             <Image
             source={{ uri: 'https://uxwing.com/wp-content/themes/uxwing/download/communication-chat-call/accept-call-icon.png' }}
             style={{ width: 50, height: 50 }}
@@ -313,7 +378,7 @@ setAutoPrice(roundToNearestTen(parseInt(FinalPrice, 10)));
           <Text style={styles.dateTimeText}>{formattedDateTime}</Text>
           </View>
 
-          <TouchableOpacity onPress={() => sendMessageOnWhatsApp(phNumber, message)} style={styles.iconContainerRight}>
+          <TouchableOpacity onPress={() => sendMessageOnWhatsApp(phoneNumber, message)} style={styles.iconContainerRight}>
           <Image
             source={{ uri: 'https://png.pngtree.com/png-vector/20221018/ourmid/pngtree-whatsapp-icon-png-image_6315990.png' }}
             style={{ width: 50, height: 50 }}
@@ -355,8 +420,6 @@ const styles = StyleSheet.create({
     padding: 16,
     margin: 8,
     elevation: 3,
-    flex:1,
-    flexDirection:'horizontal',
   },
   sidecard: {
     backgroundColor: colors.backgroundShadow,
@@ -439,7 +502,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
- 
+  closeIconPopupRight: {
+    zIndex: 1,
+    position: 'absolute',
+     // Adjust this value for the desired vertical position
+    right: 1, // Adjust this value for the desired horizontal position
+    backgroundColor: 'rgba(0, 0, 0, 0.25)', // Background color with transparency
+    borderRadius: 30, // Adjust to create a circular shape
+    height: 40,
+    width: 40,
+     // Adjust for icon size and padding
+     // Ensure it's displayed on top of the ScrollView
+},
+container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default DashBoard2;

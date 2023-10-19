@@ -2,7 +2,7 @@ import firestore from '@react-native-firebase/firestore';
 
 const fetchCarouselData = async () => {
   try {
-    const carouselDataRef = firestore().collection('carouselData'); // Replace with your collection name
+    const carouselDataRef = firestore().collection('Banners'); // Replace with your collection name
     const snapshot = await carouselDataRef.get();
 
     const carouselData = [];
@@ -12,7 +12,7 @@ const fetchCarouselData = async () => {
 
     return carouselData;
   } catch (error) {
-    console.error('Error fetching carousel data:', error);
+    console.error('Error fetching carousel data:', error); 
     return [];
   }
 };

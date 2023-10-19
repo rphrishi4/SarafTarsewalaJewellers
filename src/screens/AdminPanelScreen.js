@@ -22,6 +22,8 @@ const AdminPanelScreen = () => {
   const [finalPrice, setFinalPrice] = useState('')
   const [autoInterval, setautoInterval] = useState('')
   const [isRefreshing, setIsRefreshing] = useState(false);  
+  const [API_KEY, setAPIKEY] = useState(false);  
+
 
   
 // Reference to the Firestore collection and document
@@ -62,7 +64,8 @@ const [currentDateTime, setCurrentDateTime] = useState(new Date());
     GST:gstcheck,
     AutoPrice:autoPricecheck,
     Surcharge:parseInt(surcharge, 10),
-    AutoInterval:parseInt(autoInterval)
+    AutoInterval:parseInt(autoInterval),
+    ApiKey:API_KEY
   };
   
   const handleUpdate = () => {
@@ -104,7 +107,7 @@ else{
 };
 
 const fetchData = () =>{
-    const API_KEY= '4f6cd11a68b4cdc7296f6e8a396fe95c'
+    
     const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key='+API_KEY+'&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
    try {
   axios
@@ -312,6 +315,21 @@ useEffect(() => {
       </View>
     </View>
     </View> */}
+{/* API_KEY */}
+      <View style={{flex: 1,marginTop: 24}}>
+      <Text style={{textAlign: 'center', fontSize: 18, fontWeight: '700', color: colors.marron}}>Enter API KEY IF CHANGED</Text>
+      <View style={styles.container}>
+      <View style={styles.inputContainer}>
+        <TextInput 
+          value={API_KEY} 
+          onChangeText={(e) => setAPIKEY(e)} 
+          style={styles.inputField} 
+          placeholderTextColor={'grey'} 
+          placeholder="Enter API KEY" 
+        />
+      </View>
+    </View>
+    </View> 
 
     {/* Submit Button */}
     <TouchableOpacity style={{marginTop: 24}} >

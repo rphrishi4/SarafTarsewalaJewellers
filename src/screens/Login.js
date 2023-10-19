@@ -22,6 +22,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const dispatch  = useDispatch()
   const navigation = useNavigation()
+  const [error, setError] = useState(null);
 
   const handleLogin = () => {
 
@@ -34,14 +35,25 @@ const Login = () => {
   })
   .catch(error => {
     if (error.code === 'auth/email-Not-in-use') {
+      setError('Invalid password. Please try again.');
       console.log('That email/password is incorrrect!');
     }
 
     if (error.code === 'auth/invalid-email') {
+      setError('That email address is invalid!');
       console.log('That email address is invalid!');
     }
+    if (error.code === 'auth/invalid-login') {
+      setError('Invalid Login Credentials');
+      console.log('Invalid Login Credentials');
+    }
+    
+    else {
+      setError('An error occurred. Please try again later.');
+      console.log(error);
+    }
 
-    console.error(error);
+   // console.error(error);
   });
 
     // // Perform your authentication logic here
@@ -88,6 +100,10 @@ const Login = () => {
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
+      <View >
+      {error && <Text style={styles.error}>{error}</Text>}
+
+      </View>
     </View>
   );
 };
@@ -118,6 +134,11 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     backgroundColor:'#FFFFFF',
+  },
+  error: {
+    color: 'black',
+    fontSize:25,
+    fontWeight:'bold',
   },
   input: {
     height: 40,

@@ -1,9 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React,{useState, useEffect} from 'react';
+
 import { colors } from '../theme'
 
 const Setting = () => {
+ //const [SphoneNumber, setSphoneNumber] = useState('+919922022664');
+
   return (
+    
     <View style={styles.container}>
       <Text>Setting</Text>
     </View>

@@ -27,7 +27,7 @@ export default function popUp() {
                         height: '70%',
                         borderRadius: 10,
                     }}>
-                    <TouchableOpacity onPress={() => setPopup(false) && FinalPriceCalculate()}>
+                    <TouchableOpacity onPress={() => setPopup(false)}>
                         <Image
                             source={{ uri: 'https://icons.iconarchive.com/icons/iconsmind/outline/512/Close-icon.png' }}
                             style={styles.closeIconPopupRight}
