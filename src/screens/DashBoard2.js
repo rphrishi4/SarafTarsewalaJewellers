@@ -33,10 +33,10 @@ const DashBoard2 = () => {
   const [flagAutoPrice, setFlagAutoPrice] = useState(true);
   const [surcharge, setSurcharge] = useState('');
   const [rate24K, setRate24K] = useState('');
-  const [db_popup, getPopup] = useState('https://metalpriceapi.com/assets/logo-dark-b4271658d08b5c510c2204a516115f6707c329150d4ccc483ba70d0d9830b35a.png');
+  const [db_popup, getPopup] = useState('');
   
-  const [db_b1, getb1] = useState('https://metalpriceapi.com/assets/logo-dark-b4271658d08b5c510c2204a516115f6707c329150d4ccc483ba70d0d9830b35a.png');
-  const [db_b2, getb2] = useState('https://metalpriceapi.com/assets/logo-dark-b4271658d08b5c510c2204a516115f6707c329150d4ccc483ba70d0d9830b35a.png');
+  const [db_b1, getb1] = useState('');
+  const [db_b2, getb2] = useState('');
 
   const [APIKEY, getAPIKEY] = useState(null);
 
@@ -222,7 +222,7 @@ const DashBoard2 = () => {
     const flagTimeout = setTimeout(() => {
       console.log('In Set TImeout')
       setFlagAutoPrice(false);
-    }, 6000);
+    }, 60000);
 
     // Clean up the flag timeout to avoid memory leaks
     return () => clearTimeout(flagTimeout);
