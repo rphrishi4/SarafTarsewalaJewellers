@@ -10,11 +10,6 @@ const ImageList = () => {
   const { height, width } = Dimensions.get('window');
 
   
-  const [db_b1, getb1] = useState('');
-  const [db_b2, getb2] = useState('');
-  const [db_b3, getb3] = useState('');
-  const [db_b4, getb4] = useState('');
-
   const imageb1 = require('../assets/Images/imageb1.jpg');
   const imageb2 = require('../assets/Images/imageb2.jpg');
   const imageb3 = require('../assets/Images/imageb3.webp');
@@ -39,36 +34,33 @@ const ImageList = () => {
   ]);
   const [selectedIndex, setSelectedIndex] = useState();
 
-  function getdatafromdatabase() {
-    const priceRef = firestore().collection('Banners').doc('Image');
+  const BannerRef = firestore().collection('Banners');
 
-    const unsubscribe = priceRef.onSnapshot((snapshot) => {
-      //Fetch from DB
-      const img_b1 =snapshot.data()?.banner1
-      const img_b2 =snapshot.data()?.banner2
-      const img_b3 =snapshot.data()?.banner3
-      const img_b4 =snapshot.data()?.banner4
-
-      //Setting state of Variables  
-      getb1(img_b1);
-      getb2(img_b2);
-      getb3(img_b3);
-      getb4(img_b4);
-
-
-      console.log('In Datbase Function for Image List');
-
-    });
-    return () => unsubscribe();
-  }
-
-  //getdatafromdatabase();
-  //Use Effect
+  
+  
   const ref = useRef();
   const [index, setIndex] = useState(1);
+  const [imagesBannerArray,getBannerImages]=useState([]);
+
   useEffect(() => {
+
+    BannerRef
+        .onSnapshot(
+          querySnapshot => {
+            const tempImage=[]
+            querySnapshot.forEach((doc)=>{
+              const {imageUrl} = doc.data()
+              tempImage.push({
+                id:doc.id,
+                imageUrl,
+              })
+            })
+            console.log(tempImage);
+            getBannerImages(tempImage)
+          }
+        )
     
-    if(index==data[0].items.length){
+    if(index==imagesBannerArray.length){
       console.log('In Outer IF Loop Index  :'+index);
 
       setIndex(0);
@@ -81,7 +73,7 @@ const ImageList = () => {
         
         setIndex(index + 1);
        console.log('After set Index  :'+index);
-       console.log('After set Items.Length  :'+data[0].items.length);
+       console.log('After set Items.Length  :'+imagesBannerArray.length);
 
        
       }, 3000);  
@@ -92,6 +84,7 @@ const ImageList = () => {
   return (
       <View style={{ flex: 1 }}>
         <View style={{ alignContent: 'center', width: width, height: height / 4, borderRadius: 10 }}>
+         
           <FlatList
              ref={ref}
             pagingEnabled
@@ -101,16 +94,16 @@ const ImageList = () => {
                 (e.nativeEvent.contentOffset.x / width).toFixed(0),
               );
             }}
-            data={data[0].items}
+            data={imagesBannerArray}
             showsHorizontalScrollIndicator={false}
             renderItem={({ item, index }) => {
               return (
-                <Image source={item} style={{ alignContent: 'center', width: width-20,marginLeft:10,marginRight:10, height: height / 4, borderRadius: 10 }} />
+                <Image source={{uri:item.imageUrl}} style={{ alignContent: 'center', width: width-20,marginLeft:10,marginRight:10, height: height / 4, borderRadius: 10 }} />
               )
             }} /> 
           <View style={{ width: width, height: 40, position: 'absolute', alignItems: 'center', justifyContent: 'center', bottom: 0, flexDirection: 'row' }}>
             {
-              data[0].items.map((item, index) => {
+              imagesBannerArray.map((item, index) => {
                 return (
                   <View
                     style={{
