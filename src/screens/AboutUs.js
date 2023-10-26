@@ -141,7 +141,8 @@ const AboutUs = (props) => {
         </Text>
          
         
-        <View style={{
+        <View style={{ flex: 1,justifyContent: "center",
+    alignItems: "center",
           display:'flex',flexDirection:'column',flexWrap:'wrap' }}>
              
               {
@@ -151,12 +152,15 @@ const AboutUs = (props) => {
                   }>
                     <Text style={styles.heading}>{item.Title}</Text> 
                     {/* <Text style={styles.heading}>{item.Url}</Text> */}
-                    <Image source={{uri:item.Url}} style={{
-                      height: deviceHeight/4,
+                    <Pinchable>
+                      <Image source={{uri:item.Url}} style={{
+                      height: deviceHeight/1.5,
                       width:deviceWidth/1.1,
                       borderRadius:10, margin:2,
                       borderColor:'red',
                     }}/> 
+                    </Pinchable>
+                    
                   </TouchableOpacity>
                 ))
               }

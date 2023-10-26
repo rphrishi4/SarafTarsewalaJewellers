@@ -1,20 +1,44 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
 import { Marquee } from '@animatereactnative/marquee';
 import MarqueeText from 'react-native-marquee';
+import firestore from '@react-native-firebase/firestore';
 
 function ContinuousHorizontalTextScroll() {
 
-  const text = "We Offer HallMark Certificate for all Ornaments, Tap to View Sample image of certificate.                    ";
+      //TextScroll
+  const [db_textscroll, gettextscroll] = useState('We Offer HallMark Certificate for all Ornaments, Tap to View Sample image of certificate.                    ')
 
-  
+  useEffect(() => {
+    getdatafromdatabase();
+    console.log('In UseEffect call Stack of Horizontal Scroll View');
+},[]);
+
+
+  function getdatafromdatabase() {
+    const priceRef = firestore().collection('Rates').doc('24k');
+
+    const unsubscribe = priceRef.onSnapshot((snapshot) => {
+      //Fetch from DB
+      const textscroll=snapshot.data()?.scrollText
+
+
+      //Setting state of Variables
+      gettextscroll(textscroll);
+
+
+      console.log('In Datbase Function');
+    
+    });
+    return () => unsubscribe();
+  }
 
   return (
     
     <View >
       <View style={styles.container}>
         <Marquee spacing={20} speed={1}>
-      <Text> {text} </Text>
+      <Text> {db_textscroll} </Text>
               </Marquee>
 
       </View>

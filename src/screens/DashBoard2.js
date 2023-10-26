@@ -42,7 +42,7 @@ const DashBoard2 = () => {
   const [db_popup, getPopup] = useState('');
 
   //TextScroll
-  const [db_textscrollflag, gettextscrollflag] = useState(false);
+  const [db_textscrollflag, gettextscrollflag] = useState(true);
   const [db_textscroll, gettextscroll] = useState('');
 
 
@@ -272,9 +272,9 @@ const DashBoard2 = () => {
 
 
   const fetchAPIData = () => {
-    const APIKEY1= 'f8c33676d410aadf7f2c9038e7a549ee'
+    //const APIKEY1= 'f8c33676d410aadf7f2c9038e7a549ee'
 
-    const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key=' + APIKEY1 + '&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
+    const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key=' + APIKEY + '&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
     {
       APIKEY ? (() => {
 
@@ -378,53 +378,22 @@ const DashBoard2 = () => {
         }
       >
 
-        
         {/* Carousel */}
         {db_showbanner?
-      //   <View>
-      //     <Carousel
-      //   data={bannerData}
-      //   renderItem={renderBanner}
-      //   sliderWidth={width} // Adjust the slider width here
-      //   itemWidth={width - 20}   // Adjust the item width here
-      //   layout={'tinder'}
-      //   //layoutCardOffset={`10`}
-      //   loop={true}
-      //   autoplay={true}
-      //   decelerationRate="fast"
-      //   autoplayInterval={5000}
-      //   onSnapToItem={(index) => setActiveSlide(index)}
-        
-      // />
-      //   <Pagination
-      //     dotsLength={bannerData.length}
-      //     activeDotIndex={activeSlide}
-      //     containerStyle={styles.paginationContainer}
-      //     dotStyle={styles.paginationDot}
-      //     inactiveDotStyle={styles.paginationInactiveDot}
-      //     inactiveDotOpacity={0.6}
-      //     inactiveDotScale={0.8}
-      //   />
-      //   </View>
-        
       <View>
       <ImageList/>
       </View>
-
         :''}
         
         <View style={styles.card}>
-
           <Text style={styles.heading}>24 Karat Live Price</Text>
           <Text style={styles.cost}>{flagAutoPrice ? autoPrice : manualPrice} INR</Text>
 
-          {/* <Text style={styles.gst}>{autoGst ? 'Inclusive of GST':'Exclusive of GST'}</Text> */}
         </View>
         <View style={[styles.card, { marginBottom: 10 }]}>
           <Text style={styles.heading}>22 Karat Live Price</Text>
           <Text style={styles.cost}>{flagAutoPrice ? roundToNearestTen(autoPrice * 0.916) : roundToNearestTen(manualPrice * 0.916)} INR</Text>
 
-          {/* <Text style={styles.gst}>{autoGst ? 'Inclusive of GST':'Exclusive of GST'}</Text> */}
         </View>
         <View >
           <Image
@@ -433,12 +402,7 @@ const DashBoard2 = () => {
           />
 
         </View>
-        {/* <View style={[styles.sidecard, {marginBottom: 10}]}> */}
-
-        {/* <TwoCards/> */}
-
-
-        {/* </View> */}
+        
          {db_textscrollflag ?  <View>
           {ContinuousHorizontalTextScroll()}
          </View> : '' }
@@ -622,7 +586,7 @@ const styles = StyleSheet.create({
 export function RefreshHandleBtnOut(){
   setIsRefreshing(true);
   console.log('In Outer Export Refresh');
-
+  ToastAndroid.SHORT("Refreshed Prices");
   fetchAPIData();
   //FinalPriceCalculate();
 
