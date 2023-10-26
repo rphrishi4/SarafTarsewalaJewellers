@@ -1,42 +1,26 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { Marquee } from '@animatereactnative/marquee';
+import MarqueeText from 'react-native-marquee';
 
 function ContinuousHorizontalTextScroll() {
-  const text = "We Offer HallMark Certificate for all Ornaments";
-  const scrollValue = useRef(new Animated.Value(0)).current;
-  const textWidth = 300; // Adjust this to the width of your text
 
-  useEffect(() => {
-    //const totalWidth = textWidth * 2;
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(scrollValue, {
-          toValue: -textWidth,
-          duration: 5000, // Adjust the duration for the first scroll
-          easing: Easing.linear,
-          useNativeDriver: false,
-        }),
-        Animated.timing(scrollValue, {
-          toValue: 100,
-          duration: 0, // No delay for the reset
-          useNativeDriver: false,
-        }),
-        Animated.timing(scrollValue, {
-          toValue: textWidth,
-          duration: 5000, // Adjust the duration for the second scroll
-          easing: Easing.linear,
-          useNativeDriver: false,
-        }),
-      ])
-    ).start();
-  }, []);
+  const text = "We Offer HallMark Certificate for all Ornaments, Tap to View Sample image of certificate.                    ";
+
+  
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={{ transform: [{ translateX: scrollValue }] }}>
-        <Text style={styles.text}>{text}</Text>
-      </Animated.View>
+    
+    <View >
+      <View style={styles.container}>
+        <Marquee spacing={20} speed={1}>
+      <Text> {text} </Text>
+              </Marquee>
+
+      </View>
     </View>
+    
+    
   );
 }
 

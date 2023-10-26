@@ -22,7 +22,7 @@ const CustomDrawer = (props) => {
           source={require('../assets/icons/man.png')}
           style={styles.profileImage}
         />
-        <Text style={styles.username}>Heya! Admin</Text>
+        <Text style={styles.username}>Heya! User</Text>
       </View>
     {
       isAuthenticated  ?
@@ -69,6 +69,12 @@ const CustomDrawer = (props) => {
         <Text style={styles.drawerItemText}>Banner Images</Text>
       </TouchableOpacity>
 
+      {/* <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => props.navigation.navigate('AddPost')}
+      >
+        <Text style={styles.drawerItemText}>Upload Image</Text>
+      </TouchableOpacity> */}
 
       <TouchableOpacity
         style={styles.drawerItem}
@@ -94,7 +100,7 @@ const CustomDrawer = (props) => {
       <TouchableOpacity
         style={styles.logoutButton}
         onPress={() => {
-          // Implement logout functionality here
+          props.navigation.navigate('DashBoard')
         }}
       >
         <Text style={styles.logoutButtonText}>Logout</Text>

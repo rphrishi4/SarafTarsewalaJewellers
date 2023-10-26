@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Modal, ScrollView, Text, StyleSheet, Image, Dimensions, Linking, ToastAndroid, RefreshControl, TouchableOpacity } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
+import Carousel,{Pagination} from 'react-native-snap-carousel';
 import { colors } from '../theme';
 import axios from 'axios';
 import moment from 'moment';
@@ -10,7 +10,7 @@ import firestore from '@react-native-firebase/firestore';
 import ActionButton from 'react-native-fab';
 import popUp from './popUp';
 import ContinuousHorizontalTextScroll from '../components/ContinuousHorizontalTextScroll';
-// import { transparent } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
+import ImageList from '../components/ImageList';
 
 
 
@@ -22,18 +22,30 @@ const DashBoard2 = () => {
 
   const message = 'Hello, Saraf Tarsewalla Jewellers!';
 
-
+//Refresh flag
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  //Price Data
   const [autoPrice, setAutoPrice] = useState('');
   const [autoInterval, setAutoInterval] = useState('');
   const [manualPrice, setManualPrice] = useState('');
   const [flagGst, setGst] = useState('');
-  const [db_showbanner, showbanner] = useState(true);
-  
   const [flagAutoPrice, setFlagAutoPrice] = useState(true);
   const [surcharge, setSurcharge] = useState('');
   const [rate24K, setRate24K] = useState('');
+  
+  //banner
+  const [db_showbanner, showbanner] = useState(true);
+  const [activeSlide, setActiveSlide] = React.useState(0);
+
+  //PopUp flag
   const [db_popup, getPopup] = useState('');
+
+  //TextScroll
+  const [db_textscrollflag, gettextscrollflag] = useState(false);
+  const [db_textscroll, gettextscroll] = useState('');
+
+
   
   const [db_b1, getb1] = useState('');
   const [db_b2, getb2] = useState('');
@@ -78,7 +90,7 @@ const DashBoard2 = () => {
                 source={{ uri: 'https://icons.iconarchive.com/icons/iconsmind/outline/512/Close-icon.png' }}
                 style={styles.closeIconPopupRight}
               />
-            </TouchableOpacity>
+            
             <Image
               source={{uri:db_popup}}
               style={{
@@ -89,7 +101,7 @@ const DashBoard2 = () => {
                 // alignItems: "center",
               }}
             />
-
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -112,7 +124,8 @@ const DashBoard2 = () => {
       const bannershow=snapshot.data()?.isbanner
       const img_b1 =snapshot.data()?.banner1
       const img_b2 =snapshot.data()?.banner2
-
+      const scrolltextshow=snapshot.data()?.flagScrollText
+      const textscroll=snapshot.data()?.scrollText
 
 
       //Setting state of Variables
@@ -126,6 +139,8 @@ const DashBoard2 = () => {
       showbanner(bannershow);
       getb1(img_b1);
       getb2(img_b2);
+      gettextscrollflag(scrolltextshow);
+      gettextscroll(textscroll)
 
 
       console.log('In Datbase Function'+APIKEY);
@@ -198,6 +213,9 @@ const DashBoard2 = () => {
     },
   ];
 
+  
+  
+
   const handleRefresh = () => {
     setIsRefreshing(true);
 
@@ -254,9 +272,9 @@ const DashBoard2 = () => {
 
 
   const fetchAPIData = () => {
-    //const APIKEY1= '670581ce34d754141bd4430e0ebed7eb'
+    const APIKEY1= 'f8c33676d410aadf7f2c9038e7a549ee'
 
-    const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key=' + APIKEY + '&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
+    const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key=' + APIKEY1 + '&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
     {
       APIKEY ? (() => {
 
@@ -335,6 +353,18 @@ const DashBoard2 = () => {
     setAutoPrice(roundToNearestTen(parseInt(FinalPrice, 10)));
   }
 
+ function RefreshHandleBtn(){
+    setIsRefreshing(true);
+  console.log('In Inner Dashboard Refresh');
+    fetchAPIData();
+    //FinalPriceCalculate();
+  
+    // After data is fetched or updated, set isRefreshing to false
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000); // Simulate an API call delay
+  };
+  
 
   return (
     <View style={styles.mainView}>
@@ -348,33 +378,38 @@ const DashBoard2 = () => {
         }
       >
 
-        {/* FIrebase data Show
-         <Carousel
-        data={bannerData2}
-        renderItem={renderBanner2}
-        sliderWidth={width} // Adjust the slider width here
-        itemWidth={width - 20}   // Adjust the item width here
-        layout={'tinder'}
-        //layoutCardOffset={`10`}
-        loop={true}
-        autoplay={true} 
-        decelerationRate="fast"
-        autoplayInterval={5000}
-      /> */}
+        
         {/* Carousel */}
         {db_showbanner?
-        <Carousel
-        data={bannerData}
-        renderItem={renderBanner}
-        sliderWidth={width} // Adjust the slider width here
-        itemWidth={width - 20}   // Adjust the item width here
-        layout={'tinder'}
-        //layoutCardOffset={`10`}
-        loop={true}
-        autoplay={true}
-        decelerationRate="fast"
-        autoplayInterval={5000}
-      />
+      //   <View>
+      //     <Carousel
+      //   data={bannerData}
+      //   renderItem={renderBanner}
+      //   sliderWidth={width} // Adjust the slider width here
+      //   itemWidth={width - 20}   // Adjust the item width here
+      //   layout={'tinder'}
+      //   //layoutCardOffset={`10`}
+      //   loop={true}
+      //   autoplay={true}
+      //   decelerationRate="fast"
+      //   autoplayInterval={5000}
+      //   onSnapToItem={(index) => setActiveSlide(index)}
+        
+      // />
+      //   <Pagination
+      //     dotsLength={bannerData.length}
+      //     activeDotIndex={activeSlide}
+      //     containerStyle={styles.paginationContainer}
+      //     dotStyle={styles.paginationDot}
+      //     inactiveDotStyle={styles.paginationInactiveDot}
+      //     inactiveDotOpacity={0.6}
+      //     inactiveDotScale={0.8}
+      //   />
+      //   </View>
+        
+      <View>
+      <ImageList/>
+      </View>
 
         :''}
         
@@ -404,10 +439,12 @@ const DashBoard2 = () => {
 
 
         {/* </View> */}
-        <View>
+         {db_textscrollflag ?  <View>
           {ContinuousHorizontalTextScroll()}
-
-        </View>
+         </View> : '' }
+        
+         
+          
       </ScrollView>
 
       <TouchableOpacity onPress={() => initiateCall(phoneNumber)} style={styles.iconContainerLeft}>
@@ -563,6 +600,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  paginationContainer: {
+    paddingVertical: 10,
+  },
+  paginationDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 8,
+    backgroundColor: 'blue', // Active dot color
+  },
+  paginationInactiveDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 8,
+    backgroundColor: 'gray', // Inactive dot color
+  },
 });
+
+export function RefreshHandleBtnOut(){
+  setIsRefreshing(true);
+  console.log('In Outer Export Refresh');
+
+  fetchAPIData();
+  //FinalPriceCalculate();
+
+  // After data is fetched or updated, set isRefreshing to false
+  setTimeout(() => {
+    setIsRefreshing(false);
+  }, 1000); // Simulate an API call delay
+};
 
 export default DashBoard2;

@@ -9,6 +9,7 @@ import DrawerContent from './DrawerContent';
 import Login from '../screens/Login';
 import DashBoard from '../screens/DashBoard';
 import DashBoard2 from '../screens/DashBoard2';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/core';
 
 import Category from '../screens/Category';
 import SetBanner from '../screens/SetBanner';
@@ -21,25 +22,27 @@ import BankDetails from '../screens/BankDetails';
 import { Image } from 'react-native';
 import CustomHeader from '../components/CustomHeader';
 import AdminPanelScreen from '../screens/AdminPanelScreen';
+import showImage from '../components/showImage';
+// import AddPostScreen from '../screens/AdminAboutUs';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
-const GoldTabStack = createNativeStackNavigator()
+const ViewImageStack = createNativeStackNavigator();
 
-
-const TabGoldStack = () => {
+const AboutStack = () => {
   return (
-    <GoldTabStack.Navigator>
-      <GoldTabStack.Screen name="Category" component={Category} />
-      <GoldTabStack.Screen name="GoldMarket" component={GoldMarket} />
-    </GoldTabStack.Navigator>
+    <ViewImageStack.Navigator>
+      <ViewImageStack.Screen name="AboutUs" component={AboutUs} />
+      <ViewImageStack.Screen name="Gallery" component={showImage} options={{headerShown:false}}/>
+    </ViewImageStack.Navigator>
   );
 };
 
+
 const HomeTabNavigator = () => {
   return(
-  <Tab.Navigator screenOptions={{tabBarShowLabel: false, 
+  <Tab.Navigator screenOptions={{tabBarShowLabel: true, 
   //  header: (props) =>{
   //   return <CustomHeader {...props} 
   //   />
@@ -64,8 +67,7 @@ const HomeTabNavigator = () => {
 const AppDrawerNavigator = () => {
 return(
   <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />} drawerStyle={{ width: '70%' }} drawerContentOptions={{
-    contentContainerStyle: { flex: 1 },
-  }}
+    contentContainerStyle: { flex: 1 },  }}
   screenOptions={{ 
      header: (props) =>{
     return <CustomHeader {...props} 
@@ -73,7 +75,32 @@ return(
   } 
   }}
   >
-    <Drawer.Screen name="Saraf Tarsewala Jewellers" component={HomeTabNavigator} />
+    <Drawer.Screen name="Saraf Tarsewala Jewellers" component={HomeTabNavigator}
+    
+    // options={({ route }) => {
+    //   const routeName = getFocusedRouteNameFromRoute(route) ?? 'DashBoard';
+    //   console.log('In Options for Button in Header');
+    //   // if (routeName === 'DashBoard') {
+    //     return {
+    //       title: 'Saraf Tarsewala Jewellers',
+    //       headerRight: () => (
+    //         <TouchableOpacity onPress={() => setPopup(false) & setIsRefreshing(true) & handleRefresh()} >
+    //         <Button
+    //           Image='https://icons.iconarchive.com/icons/iconsmind/outline/512/Close-icon.png'
+    //           title="DashBoard"
+    //           onPress={() => {
+    //             console.log('Button Clicked;')
+    //           }}
+    //         />
+    //         </TouchableOpacity>
+    //       ),
+    //     };
+    //   // }
+
+    //   return { title: routeName };
+    // }}
+    
+    />
     <Drawer.Screen name="Banner" component={SetBanner} />
     <Drawer.Screen name="Settings" component={Setting} />
     <Drawer.Screen name="Admin" component={AdminPanelScreen} />
@@ -81,6 +108,8 @@ return(
     <Drawer.Screen name="Terms" component={Terms} />
     <Drawer.Screen name='My Account' component={ProfileScreen} />
     <Drawer.Screen name="Notification" component={Notification} />
+    {/* <Drawer.Screen name="AddPost" component={AddPostScreen} /> */}
+
   </Drawer.Navigator>
 )
 }
@@ -102,6 +131,7 @@ const RootNavigation = () => {
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="App" component={AppDrawerNavigator} />
           <Stack.Screen name="Auth" component={Login} />
+          <Stack.Screen name="showImage" component={showImage} options={{headerShown:false}}/>
         </Stack.Navigator>
     </NavigationContainer>
   );

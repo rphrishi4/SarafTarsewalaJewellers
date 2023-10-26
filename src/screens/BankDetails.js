@@ -49,7 +49,6 @@ class BankDetails extends Component {
  
 </Text>
 
-          <Text style={styles.cardDetails}>Branch - Tirora 441911</Text> 
          </View>
          </SafeAreaView>
           
