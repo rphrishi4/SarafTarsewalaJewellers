@@ -8,7 +8,6 @@ let deviceWidth = Dimensions.get('window').width;
 const showImage = (props) => {
     
   return (
-    <SafeAreaView>
   <View style={{ flex: 1,justifyContent: "center",
     alignItems: "center", }}>
         <Pinchable>
@@ -24,7 +23,6 @@ const showImage = (props) => {
       />
         </Pinchable>      
     </View>
-    </SafeAreaView>
    
   )
 }

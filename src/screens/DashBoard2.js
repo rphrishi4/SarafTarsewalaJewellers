@@ -321,6 +321,14 @@ const DashBoard2 = () => {
     return Math.round(number / 10) * 10;
   }
 
+  function roundToNearestHundred(number) {
+    if (number % 100 > 50) {
+      return Math.ceil(number / 100) * 100;
+    } else {
+      return Math.floor(number / 100) * 100;
+    }
+  }
+
   function FinalPriceCalculate(rate){
     let FinalPrice;
     console.log('In Final Price Calculate Function : '+rate);
@@ -350,7 +358,7 @@ const DashBoard2 = () => {
       FinalPrice = manualPrice;
     }
     console.log('Final price: ' + FinalPrice);
-    setAutoPrice(roundToNearestTen(parseInt(FinalPrice, 10)));
+    setAutoPrice(roundToNearestHundred(parseInt(FinalPrice, 10)));
   }
 
  function RefreshHandleBtn(){
@@ -392,7 +400,7 @@ const DashBoard2 = () => {
         </View>
         <View style={[styles.card, { marginBottom: 10 }]}>
           <Text style={styles.heading}>22 Karat Live Price</Text>
-          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestTen(autoPrice * 0.916) : roundToNearestTen(manualPrice * 0.916)} INR</Text>
+          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestHundred(autoPrice * 0.92) : roundToNearestHundred(manualPrice * 0.92)} INR</Text>
 
         </View>
         <View >

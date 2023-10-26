@@ -87,6 +87,15 @@ const AdminPanelScreen = () => {
     return Math.round(number / 10) * 10;
   }
 
+  function roundToNearestHundred(number) {
+    if (number % 100 > 50) {
+      return Math.ceil(number / 100) * 100;
+    } else {
+      return Math.floor(number / 100) * 100;
+    }
+  }
+
+
   const updatedData = {
     Manualprice: finalPrice,
     GST: gstcheck,
@@ -210,9 +219,15 @@ const AdminPanelScreen = () => {
       FinalPrice = parseInt(surcharge, 10);
       console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(False) :' + gstcheck + ' AutoPrice (False): ' + autoPricecheck + ' Final Price: ' + FinalPrice);
     }
+    else if(gstcheck && (surcharge==NaN)){
+      
+      FinalPrice = roundToNearestHundred(parseInt((rate24K * 1.03)));
+      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(False) :' + gstcheck + ' AutoPrice (False): ' + autoPricecheck + ' Final Price: ' + FinalPrice);
+    
+    }
 
     console.log('Final price: ' + FinalPrice);
-    setFinalPrice(roundToNearestTen(parseInt(FinalPrice, 10)));
+    setFinalPrice(roundToNearestHundred(parseInt(FinalPrice, 10)));
   }
 
 
