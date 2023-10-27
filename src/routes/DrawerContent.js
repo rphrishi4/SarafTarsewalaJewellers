@@ -62,12 +62,12 @@ const CustomDrawer = (props) => {
         <Text style={styles.drawerItemText}>My Account</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.drawerItem}
         onPress={() => props.navigation.navigate('Banner')}
       >
         <Text style={styles.drawerItemText}>Banner Images</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* <TouchableOpacity
         style={styles.drawerItem}

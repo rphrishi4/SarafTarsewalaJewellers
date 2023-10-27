@@ -37,8 +37,8 @@ function ContinuousHorizontalTextScroll() {
     
     <View >
       <View style={styles.container}>
-        <Marquee spacing={20} speed={1}>
-      <Text> {db_textscroll} </Text>
+        <Marquee spacing={20} speed={0.75}>
+      <Text style={{fontSize:14,color:'black',fontWeight:300}}> {db_textscroll} </Text>
               </Marquee>
 
       </View>

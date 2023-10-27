@@ -24,6 +24,10 @@ const AdminPanelScreen = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [bol_API, setbol_API] = useState(false);
   const [API_KEY, setAPIKEY] = useState('');
+  const [Round100, setround100] = useState(true);
+  const [Purity24, setPurity24] = useState('');
+  const [Purity22, setPurity22] = useState('');
+
 
 
 
@@ -50,11 +54,16 @@ const AdminPanelScreen = () => {
       const newautoPrice = snapshot.data()?.AutoPrice;
       const newSurcharge = snapshot.data()?.Surcharge;
       const APIKEY = snapshot.data()?.ApiKey
+      const purity24= snapshot.data()?.db_purity24;
+      const purity22= snapshot.data()?.db_purity22;
+      const Roundto100 = snapshot.data()?.db_roundto100;
 
 
       //Setting state of Variables
       setAPIKEY(APIKEY);
-
+      setPurity24(purity24);
+      setPurity22(purity22)
+      setround100(Roundto100);
 
       console.log('In Get data from Database  :' + APIKEY);
       fetchData()
@@ -203,6 +212,7 @@ const AdminPanelScreen = () => {
   //Final Price Calculation
   const PriceCalculate = () => {
     var FinalPrice;
+    
     if (gstcheck && autoPricecheck) { //GST True and Surcharge True
       FinalPrice = ((parseInt(rate24K, 10) * 1.03) + parseInt(surcharge, 10));
       console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(True) :' + gstcheck + ' AutoPrice (True): ' + autoPricecheck + ' Final Price: ' + FinalPrice);
@@ -226,8 +236,13 @@ const AdminPanelScreen = () => {
     
     }
 
-    console.log('Final price: ' + FinalPrice);
+    FinalPrice=FinalPrice*Purity24;
+    console.log('Final price & 24Purity:'+Purity24 +' is '+ FinalPrice);
+    if(Round100==true)
     setFinalPrice(roundToNearestHundred(parseInt(FinalPrice, 10)));
+    else{
+    setFinalPrice(roundToNearestTen(parseInt(FinalPrice, 10)));
+     }
   }
 
 
@@ -246,13 +261,13 @@ const AdminPanelScreen = () => {
         {/* 24k Price Live */}
         <View style={styles.card}>
           <Text style={styles.heading}>24 Karat Live Price</Text>
-          <Text style={styles.cost}>{gstcheck ? 'With GST:  ' + (rate24K * 1.03).toFixed(2) : 'Without GST:  ' + (rate24K * 1).toFixed(2)}</Text>
+          <Text style={styles.cost}>{gstcheck ? 'With GST:  ' + (rate24K * 1.03 * Purity24).toFixed(2) : 'Without GST:  ' + (rate24K * 1 * Purity24).toFixed(2)}</Text>
         </View>
 
         {/* 22k Price Live */}
         <View style={styles.card}>
           <Text style={styles.heading}>22 Karat Live Price</Text>
-          <Text style={styles.cost}>{gstcheck ? 'With GST:  ' + (rate24K * 1.03 * 0.916).toFixed(2) : 'Without GST:  ' + (rate24K * 0.916).toFixed(2)}</Text>
+          <Text style={styles.cost}>{gstcheck ? 'With GST:  ' + (rate24K * 1.03 * Purity22).toFixed(2) : 'Without GST:  ' + (rate24K * Purity22).toFixed(2)}</Text>
         </View>
 
         {/* GST INCLUSION */}

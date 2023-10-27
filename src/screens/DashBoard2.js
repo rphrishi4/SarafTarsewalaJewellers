@@ -52,9 +52,11 @@ const DashBoard2 = () => {
 
   const [APIKEY, getAPIKEY] = useState(null);
 
-
   const [phoneNumber, setphoneNumber] = useState('+919922022664');
 
+  const [Round100, setround100] = useState(true);
+  const [Purity24, setPurity24] = useState('');
+  const [Purity22, setPurity22] = useState('');
 
 
 
@@ -127,6 +129,11 @@ const DashBoard2 = () => {
       const scrolltextshow=snapshot.data()?.flagScrollText
       const textscroll=snapshot.data()?.scrollText
 
+      const purity24= snapshot.data()?.db_purity24;
+      const purity22= snapshot.data()?.db_purity22;
+      const Roundto100 = snapshot.data()?.db_roundto100;
+
+
 
       //Setting state of Variables
       setManualPrice(newPrice);
@@ -142,6 +149,9 @@ const DashBoard2 = () => {
       gettextscrollflag(scrolltextshow);
       gettextscroll(textscroll)
 
+      setPurity24(purity24);
+      setPurity22(purity22)
+      setround100(Roundto100);
 
       console.log('In Datbase Function'+APIKEY);
       //fetchAPIData();
@@ -358,7 +368,13 @@ const DashBoard2 = () => {
       FinalPrice = manualPrice;
     }
     console.log('Final price: ' + FinalPrice);
+    FinalPrice=FinalPrice*Purity24;
+    console.log('Final price & 24Purity:'+Purity24 +' is '+ FinalPrice);
+    if(Round100==true)    
     setAutoPrice(roundToNearestHundred(parseInt(FinalPrice, 10)));
+    else{
+    setAutoPrice(roundToNearestTen(parseInt(FinalPrice, 10)));
+     }
   }
 
  function RefreshHandleBtn(){
@@ -391,16 +407,23 @@ const DashBoard2 = () => {
       <View>
       <ImageList/>
       </View>
-        :''}
+        :<View/>}
         
         <View style={styles.card}>
           <Text style={styles.heading}>24 Karat Live Price</Text>
-          <Text style={styles.cost}>{flagAutoPrice ? autoPrice : manualPrice} INR</Text>
-
+          {Round100 ? 
+          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestHundred(autoPrice * Purity24) : roundToNearestHundred(manualPrice * Purity24)} INR</Text>
+            :
+          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestTen(autoPrice * Purity24) : roundToNearestTen(manualPrice * Purity24)} INR</Text>
+        }
         </View>
         <View style={[styles.card, { marginBottom: 10 }]}>
           <Text style={styles.heading}>22 Karat Live Price</Text>
-          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestHundred(autoPrice * 0.92) : roundToNearestHundred(manualPrice * 0.92)} INR</Text>
+          {Round100 ? 
+          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestHundred(autoPrice * Purity22) : roundToNearestHundred(manualPrice * Purity22)} INR</Text>
+            :
+          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestTen(autoPrice * Purity22) : roundToNearestTen(manualPrice * Purity22)} INR</Text>
+        }
 
         </View>
         <View >
@@ -413,7 +436,7 @@ const DashBoard2 = () => {
         
          {db_textscrollflag ?  <View>
           {ContinuousHorizontalTextScroll()}
-         </View> : '' }
+         </View> : <View/> }
         
          
           
