@@ -1,15 +1,47 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Image } from 'react-native';
+import { View, Text, StyleSheet, Animated, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { colors } from '../theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import firestore from '@react-native-firebase/firestore';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import UPIPayment from '../components/UPIPayment';
 
 class BankDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      AccName: 'Jewellers',
+      AccNum: '9854546',
+      AccIFSC: 'AHJSDASG',
+      AccLogo: 'abcd.png',
+      UpiId: 'sagar@ybl',
       expanded: false,
       animation: new Animated.Value(0),
     };
+  }
+
+  componentDidMount() {
+    this.getDataFromDatabase();
+  }
+
+  getDataFromDatabase = () => {
+    const priceRef = firestore().collection('BankDetails').doc('Bank');
+    this.unsubscribe = priceRef.onSnapshot((snapshot) => {
+      const data = snapshot.data();
+      this.setState({
+        AccName: data?.AccNam || 'Jewellers',
+        AccNum: data?.AccNo || '9854546',
+        AccIFSC: data?.BankIFSC || 'AHJSDASG',
+        AccLogo: data?.BankLogo || 'abcd.png',
+        BankUpiId: data?.BankUpiId || 'ybl',
+      });
+    });
+  };
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 
   toggleCard = () => {
@@ -23,77 +55,98 @@ class BankDetails extends Component {
   };
 
   render() {
-    const { expanded, animation } = this.state;
-    const cardHeight = animation.interpolate({
+    const { AccName, AccNum, AccIFSC, AccLogo, BankUpiId, expanded, animation } = this.state;
+
+    const heightInterpolation = animation.interpolate({
       inputRange: [0, 1],
-      outputRange: [100, 140], // Adjust the heights as needed
+      outputRange: [0, 150],
     });
 
     return (
-      <SafeAreaView>
-         <View style={margin=10}>
-          <View style={styles.containerLogo}>
-      <Image
-        source={{uri: "https://imageupload.io/ib/9LRrgBgCtR5B9Mc_1697553835.png"}}
-        style={styles.logo}
-      />
-      </View>
-          <Text style={styles.cardTitle}>HDFC BANK Details</Text>
+      <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.logoContainer}>
+            <Image source={{ uri: AccLogo }} style={styles.logo} />
+            <Text style={styles.title}>Bank Details</Text>
+          </View>
 
-          <Text style={styles.cardDetails}>Account Number: 59209765988799</Text>
+          <View style={styles.card}>
+            <Text style={styles.detailLabel}>Account Name</Text>
+            <Text style={styles.detailText}>{AccName}</Text>
+          </View>
 
-          <Text style={styles.cardDetails}>IFSC Code: HDFC0005697</Text>
+            <View style={styles.card}>
+              <Text style={styles.detailLabel}>Account Number</Text>
+              <Text style={styles.detailText}>{AccNum}</Text>              
+            </View>            
 
-          <Text style={styles.cardDetails}>Address: Beside Band Of Baroda, 
-          <Text style={styles.cardDetails}>Va Plaza, Subhash Ward, Station Road</Text>
- 
-</Text>
+          <View style={styles.card}>
+            <Text style={styles.detailLabel}>IFSC Code</Text>
+            <Text style={styles.detailText}>{AccIFSC}</Text>
+          </View>
 
-         </View>
-         </SafeAreaView>
-          
+          <UPIPayment ParaUpiId={BankUpiId} />
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  card: {
+  container: {
+    flex: 1,
     backgroundColor: colors.backgroundShadow,
-    borderRadius: 10,
-    padding: 16,
-    margin: 16,
-    elevation: 3,
+  },
+  scrollContainer: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
   },
   logo: {
-    margin:10,
-    padding:10,
-    alignItems:'center',
-    width: '100%',
-    height: '100%',
-    marginBottom: 5,
+    width: 120,
+    height: 120,   
+    backgroundColor: '#FFF',
+    marginBottom: 10,
   },
-  containerLogo: {
-    margin:10,
-    padding:10,
-    alignItems:'center',
-    width: '100%',
-    height: '60%',
-    marginBottom: 5,
-  },
-  cardTitle: {
+  title: {
     fontSize: 28,
-    textAlign:'center',
     fontWeight: 'bold',
     color: colors.marron,
-   
-
   },
-  cardDetails:{
-    fontSize: 20,
+  card: {
+    width: '90%',
+    padding: 15,
+    borderRadius: 8,
+    backgroundColor: '#FFF',
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  detailLabel: {
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.marron,
-    paddingStart: 18,
-    padding:10
-  }
+  },
+  detailText: {
+    fontSize: 16,
+    color: '#333',
+    marginTop: 5,
+  },
+  animatedContainer: {
+    overflow: 'hidden',
+    paddingVertical: 5,
+  },
 });
 
 export default BankDetails;

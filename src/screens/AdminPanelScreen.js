@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { colors } from '../theme'
 import { ScrollView } from 'react-native-gesture-handler';
 import CustomCheckbox from '../components/CustomCheckbox';
+import UpdateAPI from './UpdateAPI';
 import axios from 'axios';
 
 import firestore from '@react-native-firebase/firestore';
@@ -18,7 +19,7 @@ const AdminPanelScreen = () => {
   const [gstcheck, setGSTCheck] = useState(false);
   const [autoPricecheck, setAutocheck] = useState(false);
   const [rate24K, setRate24K] = useState('');
-  const [surcharge, setSurcharge] = useState('')
+  const [surcharge, setSurcharge] = useState(0)
   const [finalPrice, setFinalPrice] = useState('')
   const [autoInterval, setautoInterval] = useState('')
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -27,6 +28,10 @@ const AdminPanelScreen = () => {
   const [Round100, setround100] = useState(true);
   const [Purity24, setPurity24] = useState('');
   const [Purity22, setPurity22] = useState('');
+  const [responseheader, setResponseHeader] = useState('');
+  const [CurrentUsage, setCurrentUsage] = useState('');
+  const [APIQuota, setAPIQuota] = useState('');
+  const [new_API_KEY,setnew_APIKEY]=useState('');
 
 
 
@@ -57,6 +62,7 @@ const AdminPanelScreen = () => {
       const purity24= snapshot.data()?.db_purity24;
       const purity22= snapshot.data()?.db_purity22;
       const Roundto100 = snapshot.data()?.db_roundto100;
+      
 
 
       //Setting state of Variables
@@ -152,9 +158,6 @@ const AdminPanelScreen = () => {
     }
   };
 
-
-
-
   useEffect(() => {
     getdatafromdatabase()
 
@@ -170,8 +173,19 @@ const AdminPanelScreen = () => {
       axios
         .get(apiUrl)
         .then((response) => {
+          
+          setCurrentUsage(response.headers['x-api-current']);
+          setAPIQuota(response.headers['x-api-quota']);
+          console.log('res',"Curent API Usage: " + CurrentUsage + " API Quota: "+ APIQuota );
+
           console.log('res', response.data);
           calculateRates(response.data?.rates)
+
+          if(CurrentUsage>100)
+            {
+            console.log('In Change Function');
+            UpdateAPI(CurrentUsage,API_KEY);
+            }
         })
         .catch((error) => {
           console.error('Error fetching data:', error);
@@ -202,18 +216,24 @@ const AdminPanelScreen = () => {
   // GST Checkbox
   const handleGSTCheckbox = () => {
     setGSTCheck(e => !e)
+    PriceCalculate();
   }
 
   //Auto Price checkbox
   const handleAutoCheckbox = () => {
     setAutocheck(f => !f)
+    PriceCalculate();
   }
 
   //Final Price Calculation
   const PriceCalculate = () => {
     var FinalPrice;
     
-    if (gstcheck && autoPricecheck) { //GST True and Surcharge True
+    if (!gstcheck && !autoPricecheck){
+      FinalPrice=roundToNearestHundred(parseInt(rate24K));
+      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(False) :' + gstcheck + ' AutoPrice (False): ' + autoPricecheck + ' Final Price: ' + FinalPrice);
+    }
+    else if (gstcheck && autoPricecheck) { //GST True and Surcharge True
       FinalPrice = ((parseInt(rate24K, 10) * 1.03) + parseInt(surcharge, 10));
       console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(True) :' + gstcheck + ' AutoPrice (True): ' + autoPricecheck + ' Final Price: ' + FinalPrice);
     }
@@ -233,10 +253,10 @@ const AdminPanelScreen = () => {
       
       FinalPrice = roundToNearestHundred(parseInt((rate24K * 1.03)));
       console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(False) :' + gstcheck + ' AutoPrice (False): ' + autoPricecheck + ' Final Price: ' + FinalPrice);
-    
     }
+    
 
-    FinalPrice=FinalPrice*Purity24;
+    //FinalPrice=FinalPrice*Purity24;
     console.log('Final price & 24Purity:'+Purity24 +' is '+ FinalPrice);
     if(Round100==true)
     setFinalPrice(roundToNearestHundred(parseInt(FinalPrice, 10)));
@@ -254,20 +274,40 @@ const AdminPanelScreen = () => {
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
-            onRefresh={handleRefresh}
+            onRefresh={handleRefresh || PriceCalculate}
           />
         }
       >
+         <TouchableOpacity
+        style={styles.button}
+        onPress={handleRefresh}
+      >
+        <Text style={styles.buttonText}>Refresh</Text>
+      </TouchableOpacity>
+
+      {/* <TouchableOpacity
+        style={styles.button}
+            onPress={ CheckUpdate }
+      >
+        <Text style={styles.buttonText}>Check and update API</Text>
+      </TouchableOpacity> */}
+
+        <Text style={styles.heading}>
+          API Usage:  {CurrentUsage}
+          {/* API Usage:  {CurrentUsage}/{APIQuota} */}
+        </Text>
         {/* 24k Price Live */}
         <View style={styles.card}>
           <Text style={styles.heading}>24 Karat Live Price</Text>
-          <Text style={styles.cost}>{gstcheck ? 'With GST:  ' + (rate24K * 1.03 * Purity24).toFixed(2) : 'Without GST:  ' + (rate24K * 1 * Purity24).toFixed(2)}</Text>
+          <Text style={styles.cost}> Purity 100% </Text>
+          <Text style={styles.cost}>{gstcheck ? 'With GST:  ' + (rate24K * 1.03 ).toFixed(2) : 'Without GST:  ' + (rate24K * 1 ).toFixed(2)}</Text>
         </View>
 
         {/* 22k Price Live */}
         <View style={styles.card}>
           <Text style={styles.heading}>22 Karat Live Price</Text>
-          <Text style={styles.cost}>{gstcheck ? 'With GST:  ' + (rate24K * 1.03 * Purity22).toFixed(2) : 'Without GST:  ' + (rate24K * Purity22).toFixed(2)}</Text>
+          <Text style={styles.cost}> Purity {Purity22}% </Text>
+          <Text style={styles.cost}>{gstcheck ? 'With GST:  ' + (rate24K * Purity22 * 1.03  ).toFixed(2) : 'Without GST:  ' + (rate24K * Purity22 * 1 ).toFixed(2)}</Text>
         </View>
 
         {/* GST INCLUSION */}
@@ -282,23 +322,13 @@ const AdminPanelScreen = () => {
           <View style={{ flex: 1, flexDirection: 'row', margin: 8 }}>
             <CustomCheckbox checked={autoPricecheck} onPress={handleAutoCheckbox} />
             <Text style={{ marginLeft: 10, fontSize: 18, fontWeight: '700', color: colors.marron }}>Auto Price</Text>
-            {autoPricecheck && (
-              <TextInput
-                value={autoInterval}
-                onChangeText={(e) => setautoInterval(e)}
-                style={styles.inputField}
-                keyboardType="numeric"
-                placeholderTextColor={'grey'}
-                placeholder={autoPricecheck ? "Enter Interval in Minutes to refresh Data" : " "}
-
-              />)}
 
           </View>
           <View style={{ flex: 1, marginTop: 24 }}>
             <View style={styles.inputContainer} >
               <TextInput
                 value={surcharge}
-                onChangeText={(e) => setSurcharge(e)}
+                onChangeText={(e) => setSurcharge(e) && PriceCalculate}
                 style={styles.inputField}
                 keyboardType="numeric"
                 placeholderTextColor={'grey'}
@@ -309,16 +339,20 @@ const AdminPanelScreen = () => {
           </View>
         </View>
 
+
         {/* Calculate Button */}
         <TouchableOpacity style={{ marginTop: 2 }} >
           <View style={styles.calculate}>
             <Text style={styles.calculateText} onPress={PriceCalculate} >Calculate:</Text>
           </View>
         </TouchableOpacity>
-        <Text style={styles.inputLabel}>Final Price (Round-off): {finalPrice}</Text>
+        <Text style={styles.inputLabel}>100% Price : {finalPrice}</Text>
+        <Text style={styles.inputLabel}>99.5% Price : {finalPrice*0.995}</Text>
+        <Text style={styles.inputLabel}>92% Price : {finalPrice*0.92}</Text>
+
 
         {/* API_KEY */}
-        <View>
+        {/* <View>
 
           <View style={{ flex: 1, flexDirection: 'row', margin: 8 }} >
             <CustomCheckbox checked={bol_API} onPress={handleAPICheckbox} />
@@ -340,7 +374,7 @@ const AdminPanelScreen = () => {
             </View>
             : ''}
 
-        </View>
+        </View> */}
 
 
         {/* Submit Button */}
@@ -412,6 +446,7 @@ const styles = StyleSheet.create({
     color: colors.DarkRed,
   },
   button: {
+    margin:10,
     backgroundColor: colors.marron,
     borderRadius: 5,
     paddingVertical: 10,

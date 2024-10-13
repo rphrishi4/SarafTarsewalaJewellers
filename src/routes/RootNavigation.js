@@ -1,4 +1,5 @@
 import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -7,11 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import ProfileScreen from '../screens/Profile';
 import DrawerContent from './DrawerContent';
 import Login from '../screens/Login';
-import DashBoard from '../screens/DashBoard';
+import LogoutScreen from '../screens/Logout';
+// import {BlurView} from '@react-native-community/blur';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
+
 import DashBoard2 from '../screens/DashBoard2';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/core';
 
-import Category from '../screens/Category';
+import {colors} from '../theme/colors';
+
 import SetBanner from '../screens/SetBanner';
 import Setting from '../screens/Setting';
 import AboutUs from '../screens/AboutUs';
@@ -22,7 +27,13 @@ import BankDetails from '../screens/BankDetails';
 import { Image } from 'react-native';
 import CustomHeader from '../components/CustomHeader';
 import AdminPanelScreen from '../screens/AdminPanelScreen';
+import AdminPanel from '../screens/AdminPanel';
+
 import showImage from '../components/showImage';
+import APISettings from '../screens/APISettings';
+import StockScreen from '../screens/StockScreen';
+import Dashboard3 from '../screens/DashBoard3';
+import DeveloperProfile from '../screens/DeveloperProfile';
 // import AddPostScreen from '../screens/AdminAboutUs';
 
 const Tab = createBottomTabNavigator();
@@ -40,28 +51,110 @@ const AboutStack = () => {
 };
 
 
+// const HomeTabNavigator = () => {
+//   return(
+//   <Tab.Navigator screenOptions={{tabBarShowLabel: true, 
+//   //  header: (props) =>{
+//   //   return <CustomHeader {...props} 
+//   //   />
+//   // }
+//   headerShown: false
+//   }}>
+//     <Tab.Screen name="DashBoard" component={DashBoard2} options={{ tabBarIcon : () =>{
+//       return <Image source={require('../assets/icons/home.png')} style={{height: 30, width: 30}} />
+//     }
+//     }} />
+//     <Tab.Screen name="BankDetail" component={BankDetails} options={{ tabBarIcon : () =>{
+//       return <Image source={require('../assets/icons/pricetags.png')} style={{height: 30, width: 30}} />
+//     }
+//     }} />
+//     <Tab.Screen name="ContactUs" component={Contact} options={{ tabBarIcon : () =>{
+//       return <Image source={require('../assets/icons/information-circle.png')} style={{height: 30, width: 30}} />
+//     }}} /> 
+   
+//   </Tab.Navigator>
+// )}
+
 const HomeTabNavigator = () => {
   return(
-  <Tab.Navigator screenOptions={{tabBarShowLabel: true, 
-  //  header: (props) =>{
-  //   return <CustomHeader {...props} 
-  //   />
-  // }
-  headerShown: false
+    
+  <Tab.Navigator
+  initialRouteName={"DashBoard"}
+  screenOptions={{
+    tabBarHideOnKeyboard: true,
+    headerShown: false,
+    tabBarShowLabel: false,
+    tabBarStyle: styles.tabBarStyle,
+    tabBarBackground: () => (
+      // <BlurView
+      //   overlayColor=""
+      //   blurAmount={15}
+      //   style={styles.BlurViewStyles}
+      // />
+      <View/>
+    ),
   }}>
-    <Tab.Screen name="DashBoard" component={DashBoard2} options={{ tabBarIcon : () =>{
-      return <Image source={require('../assets/icons/home.png')} style={{height: 30, width: 30}} />
-    }
-    }} />
-    <Tab.Screen name="BankDetail" component={BankDetails} options={{ tabBarIcon : () =>{
-      return <Image source={require('../assets/icons/pricetags.png')} style={{height: 30, width: 30}} />
-    }
-    }} />
-    <Tab.Screen name="ContactUs" component={Contact} options={{ tabBarIcon : () =>{
-      return <Image source={require('../assets/icons/information-circle.png')} style={{height: 30, width: 30}} />
-    }}} /> 
-   
-  </Tab.Navigator>
+  <Tab.Screen
+    name="BankDetail" 
+    component={BankDetails}
+    options={{
+      tabBarIcon: ({focused, color, size}) => (
+        <MaterialIcons 
+          name="assured-workload"
+          size={40}
+          color={
+            focused ? colors.golden : colors.lightgolden
+          }
+        />
+      ),
+    }}></Tab.Screen>
+ {/*
+<Tab.Screen
+    name="AboutUs" 
+    component={AboutUs}
+    options={{
+      tabBarIcon: ({focused, color, size}) => (
+        <MaterialIcons 
+          name="info"
+          size={40}
+          color={
+            focused ? colors.primaryOrangeHex : colors.primaryLightGreyHex
+          }
+        />
+      ),
+    }}></Tab.Screen> */}
+
+  <Tab.Screen
+    name="DashBoard" 
+    component={DashBoard2}
+    options={{
+      tabBarIcon: ({focused, color, size}) => (
+        <MaterialIcons
+          name="home"
+          size={40}
+          color={
+            focused ? colors.golden : colors.lightgolden
+          }
+        />
+      ),
+    }}></Tab.Screen>
+
+  <Tab.Screen
+   name="ContactUs" 
+   component={Contact}
+    options={{
+      tabBarIcon: ({focused, color, size}) => (
+        <MaterialIcons 
+        name="badge"   
+        size={40}
+          color={
+            focused ? colors.golden : colors.lightgolden
+          }
+        />
+      ),
+    }}></Tab.Screen>
+  
+</Tab.Navigator>
 )}
 
 const AppDrawerNavigator = () => {
@@ -75,40 +168,16 @@ return(
   } 
   }}
   >
-    <Drawer.Screen name="Saraf Tarsewala Jewellers" component={HomeTabNavigator}
-    
-    // options={({ route }) => {
-    //   const routeName = getFocusedRouteNameFromRoute(route) ?? 'DashBoard';
-    //   console.log('In Options for Button in Header');
-    //   // if (routeName === 'DashBoard') {
-    //     return {
-    //       title: 'Saraf Tarsewala Jewellers',
-    //       headerRight: () => (
-    //         <TouchableOpacity onPress={() => setPopup(false) & setIsRefreshing(true) & handleRefresh()} >
-    //         <Button
-    //           Image='https://icons.iconarchive.com/icons/iconsmind/outline/512/Close-icon.png'
-    //           title="DashBoard"
-    //           onPress={() => {
-    //             console.log('Button Clicked;')
-    //           }}
-    //         />
-    //         </TouchableOpacity>
-    //       ),
-    //     };
-    //   // }
-
-    //   return { title: routeName };
-    // }}
-    
-    />
-    <Drawer.Screen name="Banner" component={SetBanner} />
-    <Drawer.Screen name="Settings" component={Setting} />
+    <Drawer.Screen name="Saraf Tarsewala Jewellers" component={HomeTabNavigator} />
+    {/* <Drawer.Screen name="Banner" component={SetBanner} />
+    <Drawer.Screen name="Settings" component={Setting} /> */}
+    <Drawer.Screen name="Admin2" component={AdminPanel} />
     <Drawer.Screen name="Admin" component={AdminPanelScreen} />
+    <Drawer.Screen name="DeveloperProfile" component={DeveloperProfile} />
     <Drawer.Screen name="AboutUs" component={AboutUs} />
     <Drawer.Screen name="Terms" component={Terms} />
-    <Drawer.Screen name='My Account' component={ProfileScreen} />
-    <Drawer.Screen name="Notification" component={Notification} />
-    {/* <Drawer.Screen name="AddPost" component={AddPostScreen} /> */}
+    <Drawer.Screen name="Logout" component={LogoutScreen} />
+    
 
   </Drawer.Navigator>
 )
@@ -131,10 +200,28 @@ const RootNavigation = () => {
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="App" component={AppDrawerNavigator} />
           <Stack.Screen name="Auth" component={Login} />
-          <Stack.Screen name="showImage" component={showImage} options={{headerShown:false}}/>
+          <Stack.Screen name="showImage" component={showImage} />
         </Stack.Navigator>
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  tabBarStyle: {
+    height: 70,
+    //    position: 'absolute',
+    // backgroundColor: colors.marron,
+    borderTopWidth: 0,
+    elevation: 0,
+    borderTopColor: 'transparent',
+  },
+  BlurViewStyles: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+});
 
 export default RootNavigation;

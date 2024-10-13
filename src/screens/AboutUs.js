@@ -10,11 +10,11 @@ import showImage from '../components/showImage';
 // import ImageViewer from 'react-native-image-zoom-viewer';
 import { responsiveHeight,responsiveFontSize,responsiveWidth } from 'react-native-responsive-dimensions';
 import { firebase } from '@react-native-firebase/auth';
-
+import {colors} from '../theme/colors';
 const AboutUs = (props) => {
 
   const [db_para1, setPara1] = useState('Saraf Tarsewala Jewellers in Tirora is one of the leading businesses in the Jewellery Showrooms.');
-  const [db_para2, setPara2] = useState('We are known for our best in Class Jewellery Showrooms consists of Ear-rings, Pendant, Necklace and much more.\n\n');
+  const [db_para2, setPara2] = useState('We are known for our best in Class Jewellery Showrooms consists of Ear-rings, Pendant, Necklace and much more.');
   const [db_para3, setPara3] = useState('We help you find the ideal jewellery for every event within your price range.')
 
   const [db_img1,setImg1] = useState('https://lh5.googleusercontent.com/p/AF1QipOvT9or-bEQm_8egOBQ6EK54sf1BQ9dIM3TvULf=s599-p-k-no');
@@ -101,7 +101,7 @@ const AboutUs = (props) => {
     }
 
   useEffect(()=>{
-    //getdatafromdatabase()
+    getdatafromdatabase()
     
     //Fetch
     arrayRef
@@ -153,13 +153,17 @@ const AboutUs = (props) => {
                     <Text style={styles.heading}>{item.Title}</Text> 
                     {/* <Text style={styles.heading}>{item.Url}</Text> */}
                     <Pinchable>
-                      <Image source={{uri:item.Url}} style={{
-                      height: deviceHeight/1.5,
-                      width:deviceWidth/1.1,
-                      borderRadius:10, margin:2,
-                      borderColor:'red',
-                    }}/> 
-                    </Pinchable>
+                    <Image 
+                      source={{ uri: item.Url }} 
+                      style={{
+                        width: deviceWidth * 0.90,  // 90% of the screen width
+                        height: undefined,  // 2/3 of the screen height
+                        aspectRatio: 3/2,
+                        borderRadius: 10, 
+                        margin: 2,
+                      }} 
+                    /> 
+                  </Pinchable>
                     
                   </TouchableOpacity>
                 ))
@@ -174,22 +178,22 @@ const AboutUs = (props) => {
 const styles = StyleSheet.create({
   containerScroll: {
     flexGrow: 1,
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     paddingTop: 24,
   },
   container: {
     padding: 16,
-    backgroundColor: 'white', // Background color
+    backgroundColor: colors.white,
   },
   heading: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
-    color: 'black',
+    color: colors.golden,
   },
   paragraph: {
     fontSize: moderateScale(18),
-    height: verticalScale(70),
+    height: 'auto',
     width: horizontalScale(375),
     marginBottom: verticalScale(16),
     // fontSize: 18,

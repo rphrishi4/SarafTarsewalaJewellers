@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Modal, ScrollView, Text, StyleSheet, Image, Dimensions, Linking, ToastAndroid, RefreshControl, TouchableOpacity } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Modal, ScrollView, Text, StyleSheet, Image, Dimensions,FlatList, Linking, ToastAndroid, RefreshControl, TouchableOpacity } from 'react-native';
 import Carousel,{Pagination} from 'react-native-snap-carousel';
 import { colors } from '../theme';
 import axios from 'axios';
@@ -10,14 +10,107 @@ import firestore from '@react-native-firebase/firestore';
 import ActionButton from 'react-native-fab';
 import popUp from './popUp';
 import ContinuousHorizontalTextScroll from '../components/ContinuousHorizontalTextScroll';
-import ImageList from '../components/ImageList';
+import FetchAPIData from '../DataFetch/FetchAPIData';
+import FetchFirebaseData from '../DataFetch/FetchFirebaseData';
+import Dashboard from './DashBoard3';
+// import ImageList from '../components/ImageList';
 
+const ImageList = () => {
+  const { height, width } = Dimensions.get('window');
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [imagesBannerArray, setBannerImages] = useState([]);
+  const ref = useRef();
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const BannerRef = firestore().collection('Banners');
+
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await BannerRef.get();
+        const tempImages = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          imageUrl: doc.data().imageUrl,
+        }));
+        setBannerImages(tempImages);
+        startInterval(); // Start the interval after data is fetched
+      } catch (error) {
+        console.error('Error fetching image data: ', error);
+      }
+    };
+
+    fetchData(); // Fetch data when the component mounts
+
+    let interval;
+
+    const startInterval = () => {
+      if (imagesBannerArray.length > 0) {
+        interval = setInterval(() => {
+          setIndex((prevIndex) => (prevIndex + 1) % imagesBannerArray.length);
+        }, 3000);
+      }
+    };
+
+    // const startInterval = () => {
+    //   if (imagesBannerArray.length > 0) {
+    //     interval = setInterval(() => {
+    //       const nextIndex = (index + 1) % imagesBannerArray.length;
+    //       ref.current.scrollToIndex({ index: nextIndex, animated: true });
+    //       setIndex(nextIndex);
+    //     }, 3000);
+    //   }
+    // };
+
+    return () => {
+      clearInterval(interval); // Clear the interval when the component unmounts
+    };
+  }, [index]); // Run the effect when the imagesBannerArray changes
+
+  return (
+    <View style={{ flex: 1,width: width }}>
+      <View style={{ alignContent: 'center', width: '100%', height: height / 4, borderRadius: 10 }}>
+        <FlatList
+          ref={ref}
+          pagingEnabled
+          horizontal
+          onScroll={(e) => {
+            setSelectedIndex(Math.floor(e.nativeEvent.contentOffset.x / width));
+          }}
+          data={imagesBannerArray}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item, index }) => (
+            <Image
+              source={{ uri: item.imageUrl }}
+              style={{ alignContent: 'center', width: width - 20, marginLeft: 10, marginRight: 10, height: height / 4, borderRadius: 10 }}
+            />
+          )}
+        />
+        <View style={{ width: width, height: 40, position: 'absolute', alignItems: 'center', justifyContent: 'center', bottom: 0, flexDirection: 'row' }}>
+          {imagesBannerArray.map((item, i) => (
+            <View
+              key={i}
+              style={{
+                backgroundColor: selectedIndex === i ? '#8e8e8e' : '#f2f2f2',
+                height: 5,
+                width: 10,
+                opacity:50,
+              }}
+            />
+          ),)}
+        </View>
+      </View>
+    </View>
+  );
+};
 
 
 
 const { width, height } = Dimensions.get('window');
 const imageW = width * 0.7
 const imageH = imageW * 1.54
+
+
+
 const DashBoard2 = () => {
 
   const message = 'Hello, Saraf Tarsewalla Jewellers!';
@@ -26,17 +119,9 @@ const DashBoard2 = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   //Price Data
-  const [autoPrice, setAutoPrice] = useState('');
-  const [autoInterval, setAutoInterval] = useState('');
-  const [manualPrice, setManualPrice] = useState('');
-  const [flagGst, setGst] = useState('');
-  const [flagAutoPrice, setFlagAutoPrice] = useState(true);
-  const [surcharge, setSurcharge] = useState('');
-  const [rate24K, setRate24K] = useState('');
   
   //banner
   const [db_showbanner, showbanner] = useState(true);
-  const [activeSlide, setActiveSlide] = React.useState(0);
 
   //PopUp flag
   const [db_popup, getPopup] = useState('');
@@ -54,14 +139,6 @@ const DashBoard2 = () => {
 
   const [phoneNumber, setphoneNumber] = useState('+919922022664');
 
-  const [Round100, setround100] = useState(true);
-  const [Purity24, setPurity24] = useState('');
-  const [Purity22, setPurity22] = useState('');
-
-
-
-
-  const transparent = 'rgba(0, 0, 0, 0.5)';
 
   function popUp() {
     const [popoup, setPopup] = useState(true);
@@ -119,8 +196,6 @@ const DashBoard2 = () => {
       const newPrice = snapshot.data()?.Manualprice;
       const newGst = snapshot.data()?.GST;
       const newautoPrice = snapshot.data()?.AutoPrice;
-      const newSurcharge = snapshot.data()?.Surcharge;
-      const newAutoInterval = snapshot.data()?.AutoInterval;
       const API_KEY = snapshot.data()?.ApiKey
       const img_popup =snapshot.data()?.Popup
       const bannershow=snapshot.data()?.isbanner
@@ -136,11 +211,6 @@ const DashBoard2 = () => {
 
 
       //Setting state of Variables
-      setManualPrice(newPrice);
-      setGst(newGst);
-      setFlagAutoPrice(newautoPrice);
-      setSurcharge(newSurcharge);
-      setAutoInterval(newAutoInterval);
       getAPIKEY(API_KEY);
       getPopup(img_popup);
       showbanner(bannershow);
@@ -149,19 +219,8 @@ const DashBoard2 = () => {
       gettextscrollflag(scrolltextshow);
       gettextscroll(textscroll)
 
-      setPurity24(purity24);
-      setPurity22(purity22)
-      setround100(Roundto100);
 
-      console.log('In Datbase Function'+APIKEY);
-      //fetchAPIData();
-      // console.log("Manual Price: "+newPrice);
-      // console.log("GST FLAG: "+newGst);
-      // console.log("AutoPrice Flag: "+newautoPrice);
-      // console.log("If auto flag TRUE then Surcharge else manual price "+newSurcharge);
-      // console.log("If auto flag TRUE then Interval "+newAutoInterval);
-      // console.log("--------------------------------------");
-
+      console.log('In Datbase Function');
     });
     return () => unsubscribe();
   }
@@ -228,8 +287,8 @@ const DashBoard2 = () => {
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-
-    fetchAPIData();
+//
+    //fetchAPIData();
     //FinalPriceCalculate();
 
     // After data is fetched or updated, set isRefreshing to false
@@ -241,21 +300,11 @@ const DashBoard2 = () => {
 
   useEffect(() => {
     //getbannerdata();
-    getdatafromdatabase()
+    getdatafromdatabase();
     console.log('In UseEffect call Stack')
-    fetchAPIData();
-    FinalPriceCalculate();
+   
 
-    // Set the flag to true after 10 minutes (600000 milliseconds)
-    const flagTimeout = setTimeout(() => {
-      console.log('In Set TImeout')
-      setFlagAutoPrice(false);
-    }, 600000);
-
-    // Clean up the flag timeout to avoid memory leaks
-    return () => clearTimeout(flagTimeout);
-
-  }, [flagAutoPrice]);
+  }, []);
 
 
   const interval = setInterval(() => {
@@ -278,117 +327,7 @@ const DashBoard2 = () => {
     hour: '2-digit',
     minute: '2-digit',
 
-  })
-
-
-  const fetchAPIData = () => {
-    //const APIKEY1= 'f8c33676d410aadf7f2c9038e7a549ee'
-
-    const apiUrl = 'https://api.metalpriceapi.com/v1/latest?api_key=' + APIKEY + '&base=USD&currencies=INR,XAU,XAG'; // Replace with your API URL
-    {
-      APIKEY ? (() => {
-
-        try {
-          console.log('Checking API KEY IN TRY ' + APIKEY);
-          axios
-            .get(apiUrl)
-            .then((response) => {
-              console.log('res', response.data);
-
-              calculateRates(response.data?.rates)
-            })
-            .catch((error) => {
-              console.error('Error fetching data:', error);
-            });
-        } catch (error) {
-          ToastAndroid.show('Api error')
-        }
-
-      })() : null
-    }
-
-  };
-
-
-  // Function to calculate 24K and 22K gold rates based on the live gold rate
-  const calculateRates = (liveGoldRate) => {
-    if (liveGoldRate !== '') {
-      const liveRate = parseFloat(1 / liveGoldRate.XAU) * (liveGoldRate.INR) * (0.03215) * (10) * (1.15);
-      // Calculate the rate for 24 karat gold
-      console.log('In Calculate Rate Function:  ' + liveRate);
-      setRate24K(liveRate.toString());
-      console.log('In calculate Rate Function (liverate): '+liveRate)
-      FinalPriceCalculate(liveRate);
-    } else {       // Handle empty or invalid input
-      setRate24K('');
-
-    }
-  };
-
-
-  function roundToNearestTen(number) {
-    // Use Math.round to round the number to the nearest 10
-    return Math.round(number / 10) * 10;
-  }
-
-  function roundToNearestHundred(number) {
-    if (number % 100 > 50) {
-      return Math.ceil(number / 100) * 100;
-    } else {
-      return Math.floor(number / 100) * 100;
-    }
-  }
-
-  function FinalPriceCalculate(rate){
-    let FinalPrice;
-    console.log('In Final Price Calculate Function : '+rate);
-    console.log(formattedDateTime);
-    // getdatafromdatabase();
-    if (flagGst && flagAutoPrice) { //GST True and Surcharge True
-      FinalPrice = ((parseInt(rate, 10) * 1.03) + parseInt(surcharge, 10));
-      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(True) :' 
-      + flagGst + ' AutoPrice (True): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
-    }
-    else if ((flagGst == true) && (flagAutoPrice == false)) { //GST True and Surcharge False
-      FinalPrice = (1.03 * parseInt(surcharge, 10));
-      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(True) :' 
-      + flagGst + ' AutoPrice (False): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
-    }
-    else if ((flagGst == false) && (flagAutoPrice == true)) { //GST False and Surcharge True
-      FinalPrice = (parseInt(rate, 10) + parseInt(surcharge, 10));
-      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(false) :' 
-      + flagGst + ' AutoPrice (True): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
-    }
-    else if (!(flagGst || flagAutoPrice)) { //GST False and Surcharge False
-      FinalPrice = parseInt(surcharge, 10);
-      console.log('Surcharge: ' + parseInt(surcharge, 10) + ' GST(False) :' 
-      + flagGst + ' AutoPrice (False): ' + flagAutoPrice + ' Final Price: ' + FinalPrice);
-    }
-    else {
-      FinalPrice = manualPrice;
-    }
-    console.log('Final price: ' + FinalPrice);
-    FinalPrice=FinalPrice*Purity24;
-    console.log('Final price & 24Purity:'+Purity24 +' is '+ FinalPrice);
-    if(Round100==true)    
-    setAutoPrice(roundToNearestHundred(parseInt(FinalPrice, 10)));
-    else{
-    setAutoPrice(roundToNearestTen(parseInt(FinalPrice, 10)));
-     }
-  }
-
- function RefreshHandleBtn(){
-    setIsRefreshing(true);
-  console.log('In Inner Dashboard Refresh');
-    fetchAPIData();
-    //FinalPriceCalculate();
-  
-    // After data is fetched or updated, set isRefreshing to false
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 1000); // Simulate an API call delay
-  };
-  
+  })  
 
   return (
     <View style={styles.mainView}>
@@ -409,34 +348,15 @@ const DashBoard2 = () => {
       </View>
         :<View/>}
         
-        <View style={styles.card}>
-          <Text style={styles.heading}>24 Karat Live Price</Text>
-          {Round100 ? 
-          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestHundred(autoPrice * Purity24) : roundToNearestHundred(manualPrice * Purity24)} INR</Text>
-            :
-          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestTen(autoPrice * Purity24) : roundToNearestTen(manualPrice * Purity24)} INR</Text>
-        }
-        </View>
-        <View style={[styles.card, { marginBottom: 10 }]}>
-          <Text style={styles.heading}>22 Karat Live Price</Text>
-          {Round100 ? 
-          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestHundred(autoPrice * Purity22) : roundToNearestHundred(manualPrice * Purity22)} INR</Text>
-            :
-          <Text style={styles.cost}>{flagAutoPrice ? roundToNearestTen(autoPrice * Purity22) : roundToNearestTen(manualPrice * Purity22)} INR</Text>
-        }
-
-        </View>
-        <View >
-          <Image
-            source={{ uri: 'https://imageupload.io/ib/ebBS7BEMPK93nzz_1697559903.png' }}
-            style={[styles.bisImage]}
-          />
-
+        <View>
+          <Dashboard></Dashboard>
         </View>
         
          {db_textscrollflag ?  <View>
           {ContinuousHorizontalTextScroll()}
-         </View> : <View/> }
+         </View> : <View> 
+          <Text></Text>
+         </View>}
         
          
           
@@ -618,7 +538,7 @@ export function RefreshHandleBtnOut(){
   setIsRefreshing(true);
   console.log('In Outer Export Refresh');
   ToastAndroid.SHORT("Refreshed Prices");
-  fetchAPIData();
+  //fetchAPIData();
   //FinalPriceCalculate();
 
   // After data is fetched or updated, set isRefreshing to false

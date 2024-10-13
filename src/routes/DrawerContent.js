@@ -1,200 +1,161 @@
-import React,{useState} from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, Switch, Button } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Switch } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-// import CustomSwitch from '../components/CustomSwitch';
 import { useDispatch, useSelector } from 'react-redux';
 import { colors } from '../theme';
+import auth from '@react-native-firebase/auth';
+import { login, logout } from '../redux/Actions';
 
 const CustomDrawer = (props) => {
-
   const [isEnabled, setIsEnabled] = useState(false);
   const isAuthenticated = useSelector((state) => state.isAuthenticated);
   const dispatch = useDispatch();
 
-  const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
-  };
+  const toggleSwitch = () => setIsEnabled((prevState) => !prevState);
 
   return (
-    <DrawerContentScrollView {...props} style={{flex: 1, backgroundColor: colors.cream}}>
-      <View style={styles.drawerHeader}>
-        <Image
-          source={require('../assets/icons/man.png')}
-          style={styles.profileImage}
-        />
-        <Text style={styles.username}>Heya! User</Text>
+    <View style={{ flex: 1, backgroundColor: colors.backgroundShadow }}>
+      <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContainer}>
+        <View style={styles.drawerHeader}>
+          <Image
+            source={require('../assets/Images/STJ_logo_BGR.png')}
+            style={styles.profileImage}
+          />
+          <Text style={styles.username}>Welcome to STJ</Text>
+        </View>
+        
+        {isAuthenticated ? (
+          <>
+            <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('DashBoard')}>
+              <Text style={styles.drawerItemText}>Dashboard</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('Admin2')}>
+              <Text style={styles.drawerItemText}>Admin Panel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('AboutUs')}>
+              <Text style={styles.drawerItemText}>About Us</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('Terms')}>
+              <Text style={styles.drawerItemText}>Terms & Conditions</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={() => {
+                auth().signOut();
+                dispatch(logout());
+                props.navigation.navigate('DashBoard');
+              }}>
+              <Text style={styles.logoutButtonText}>Logout</Text>
+            </TouchableOpacity>
+
+          </>
+        ) : (
+          <View>
+            <TouchableOpacity onPress={() => {
+              props.navigation.closeDrawer();
+              props.navigation.navigate('Auth');
+            }}>
+              <View style={styles.loginButton}>
+                <Text style={styles.loginButtonText}>Login</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('DashBoard')}>
+              <Text style={styles.drawerItemText}>Dashboard</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('AboutUs')}>
+              <Text style={styles.drawerItemText}>About Us</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.drawerItem} onPress={() => props.navigation.navigate('Terms')}>
+              <Text style={styles.drawerItemText}>Terms & Conditions</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </DrawerContentScrollView>
+
+      <View style={styles.bottomSection}>
+        <TouchableOpacity style={styles.developerLink} onPress={() => props.navigation.navigate('DeveloperProfile')}>
+          <Text style={styles.finePrint}>Developer: Hrishikesh Rane | Hexagonick Inc.</Text>
+        </TouchableOpacity>
       </View>
-    {
-      isAuthenticated  ?
-      <>
-      <TouchableOpacity
-        style={[styles.drawerItem, {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}]}
-        onPress={() => props.navigation.navigate('Notification')}
-      >
-        <Text style={styles.drawerItemText}>Notification</Text>
-        <Switch
-        trackColor={{ false: '#767577', true: '#81b0ff' }}
-        thumbColor={isEnabled ? '#007bff' : '#f4f3f4'}
-        ios_backgroundColor="#3e3e3e"
-        onValueChange={toggleSwitch}
-        value={isEnabled}
-      />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('DashBoard')}
-      >
-        <Text style={styles.drawerItemText}>Dashboard</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('Admin')}
-      >
-        <Text style={styles.drawerItemText}>Admin Panel</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('My Account')}
-      >
-        <Text style={styles.drawerItemText}>My Account</Text>
-      </TouchableOpacity>
-
-      {/* <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('Banner')}
-      >
-        <Text style={styles.drawerItemText}>Banner Images</Text>
-      </TouchableOpacity> */}
-
-      {/* <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('AddPost')}
-      >
-        <Text style={styles.drawerItemText}>Upload Image</Text>
-      </TouchableOpacity> */}
-
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('AboutUs')}
-      >
-        <Text style={styles.drawerItemText}>About Us</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('Settings')}
-      >
-        <Text style={styles.drawerItemText}>Settings</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('Terms')}
-      >
-        <Text style={styles.drawerItemText}>Terms & Conditions</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={() => {
-          props.navigation.navigate('DashBoard')
-        }}
-      >
-        <Text style={styles.logoutButtonText}>Logout</Text>
-      </TouchableOpacity> 
-      </>
-      : 
-      <View>
-        <TouchableOpacity onPress={() => {
-        props.navigation.closeDrawer()
-        props.navigation.navigate('Auth')
-        }}>
-      <View style={styles.button}>
-        <Text style={styles.buttonText}>Login</Text>
-      </View>
-    </TouchableOpacity>
-
-    <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('DashBoard')}
-      >
-        <Text style={styles.drawerItemText}>Dashboard</Text>
-      </TouchableOpacity>
-
-    <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('AboutUs')}
-      >
-        <Text style={styles.drawerItemText}>About Us</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.drawerItem}
-        onPress={() => props.navigation.navigate('Terms')}
-      >
-        <Text style={styles.drawerItemText}>Terms & Conditions</Text>
-      </TouchableOpacity>
-
-      
-
     </View>
-
-    
-    }
-    </DrawerContentScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  drawerContainer: {
+    flexGrow: 1,
+  },
   drawerHeader: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.white,
     flexDirection: 'row',
     alignItems: 'center',
   },
   profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     marginRight: 16,
   },
   username: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.DarkRed
+    color: colors.marron,
   },
   drawerItem: {
-    padding: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
   },
   drawerItemText: {
-    fontSize: 16,
-    color: 'grey'
+    fontSize: 18,
+    color: colors.marron,
   },
   logoutButton: {
-    borderTopWidth: 1,
-    borderTopColor: colors.lightRed,
-    padding: 16,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    backgroundColor: colors.lightRed,
   },
   logoutButtonText: {
     fontSize: 16,
-    color: colors.lightRed,
+    color: colors.white,
     fontWeight: 'bold',
   },
-  button: {
-    backgroundColor: colors.marron, // Change to your desired background color
+  loginButton: {
+    backgroundColor: colors.marron,
     padding: 10,
     borderRadius: 5,
-    width: '50%',
+    marginTop: 20,
     alignSelf: 'center',
-    marginTop: 20
+    width: '80%',
   },
-  buttonText: {
-    color: colors.white, // Change to your desired text color
+  loginButtonText: {
+    color: colors.white,
     fontSize: 16,
+    textAlign: 'center',
+  },
+  devOnlyText: {
+    fontSize: 14,
+    color: colors.gray,
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  bottomSection: {
+    borderTopWidth: 1,
+    borderTopColor: colors.lightGray,
+    padding: 15,
+    alignItems: 'center',
+  },
+  finePrint: {
+    fontSize: 12,
+    color: colors.gray,
     textAlign: 'center',
   },
 });
