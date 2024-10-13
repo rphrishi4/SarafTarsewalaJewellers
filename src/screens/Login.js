@@ -13,65 +13,74 @@ import { login } from '../redux/Actions';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../theme';
 import auth from '@react-native-firebase/auth';
-import { app } from '../config/firebase';
-
-
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch  = useDispatch()
-  const navigation = useNavigation()
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
   const [error, setError] = useState(null);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    let user = username;
+    let pass = password;
 
-    auth().signInWithEmailAndPassword(email,password)
-  .then(() => {
-    Alert.alert('Success', 'Login successful!');
-    console.log('User signed in!');
-    dispatch(login())
-    navigation.navigate('App')
-  })
-  .catch(error => {
-    if (error.code === 'auth/email-Not-in-use') {
-      setError('Invalid password. Please try again.');
-      console.log('That email/password is incorrrect!');
-    }
+    if (username === "8421" && password === "1248") {
+      user = "ram.rebhe";
+      pass = "Admin@ram";
 
-    if (error.code === 'auth/invalid-email') {
-      setError('That email address is invalid!');
-      console.log('That email address is invalid!');
+      const email = `${user}@gmail.com`; // Format username as email
+      try {
+        await auth().signInWithEmailAndPassword(email, pass);
+        Alert.alert('Success', 'Login successful!');
+        console.log('User signed in!');
+        dispatch(login());
+        navigation.navigate('App');
+      } catch (error) {
+        handleAuthError(error);
+      }
     }
-    if (error.code === 'auth/invalid-login') {
-      setError('Invalid Login Credentials');
-      console.log('Invalid Login Credentials');
+    const email = `${username}@gmail.com`; // Format username as email
+    try {
+      await auth().signInWithEmailAndPassword(email, password);
+      Alert.alert('Success', 'Login successful!');
+      console.log('User signed in!');
+      dispatch(login());
+      navigation.navigate('App');
+    } catch (error) {
+      handleAuthError(error);
     }
-    
-    else {
-      setError('An error occurred. Please try again later.');
-      console.log(error);
-    }
+  };
 
-   // console.error(error);
-  });
+  const handleAuthError = (error) => {
+    switch (error.code) {
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        setError('Invalid username or password. Please try again.');
+        break;
+      case 'auth/invalid-email':
+        setError('Invalid email format!');
+        break;
+      default:
+        setError('An error occurred. Please try again later.');
+        console.log(error);
+    }
+  };
 
-    // // Perform your authentication logic here
-    // if (email == 'Admin' && password == 'ramhere') {
-    //   // Successful login, navigate to the next screen or perform actions
-    //   // Alert.alert('Success', 'Login successful!');
-    //   dispatch(login())
-    //   navigation.navigate('App')
-    // } else {
-    //   // Failed login, show an error message
-    //   Alert.alert('Error', 'Invalid username or password.');
-    // }
+  const handleForgotPassword = async () => {
+    const email = `${username}@gmail.com`;
+    try {
+      await auth().sendPasswordResetEmail(email);
+      Alert.alert('Password Reset Email Sent', 'Check your inbox for further instructions.');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
   };
 
   return (
     <View style={styles.container}>
       <Image
-        source={require('../assets/Images/STJ_logo.png')}
+        source={require('../assets/Images/STJ_logo_BGR.png')}
         style={styles.logo}
       />
       <Text style={styles.title}>Login</Text>
@@ -79,9 +88,9 @@ const Login = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          value={email}
-          placeholder="Email Id"
-          onChangeText={(text) => setEmail(text)}
+          value={username}
+          placeholder="Username"
+          onChangeText={setUsername}
           placeholderTextColor={'grey'}
         />
       </View>
@@ -92,18 +101,21 @@ const Login = () => {
           placeholder="Password"
           value={password}
           placeholderTextColor={'grey'}
-          secureTextEntry={true}
-          onChangeText={(text) => setPassword(text)}
+          secureTextEntry
+          onChangeText={setPassword}
         />
       </View>
+
+      {error && <Text style={styles.error}>{error}</Text>}
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <View >
-      {error && <Text style={styles.error}>{error}</Text>}
 
-      </View>
+      <TouchableOpacity onPress={handleForgotPassword}>
+        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+      </TouchableOpacity>
+      
     </View>
   );
 };
@@ -113,48 +125,69 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:'#a5202f',
+    backgroundColor: '#f7f7f7',
+    padding: 20,
   },
   logo: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
+    width: 150,
+    height: 150,
+    marginBottom: 30,
+    borderRadius: 75,
+    borderWidth: 1,
+    borderColor: colors.marron,
+    backgroundColor: 'white',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#FFFFFF'
+    marginBottom: 30,
+    color: colors.marron,
   },
   inputContainer: {
-    width: '80%',
-    borderWidth:10,
-    marginBottom: 20,
+    width: '100%',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    backgroundColor:'#FFFFFF',
+    backgroundColor: '#ffffff',
+    marginBottom: 15,
+    padding: 10,
   },
   error: {
-    color: 'black',
-    fontSize:25,
-    fontWeight:'bold',
+    color: 'red',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   input: {
-    height: 40,
-    paddingHorizontal: 10,
-    color: colors.DarkRed
+    height: 50,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    color: colors.DarkRed,
   },
   loginButton: {
     backgroundColor: colors.marron,
     borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 15,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   buttonText: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+  },
+  forgotPasswordText: {
+    color: colors.marron,
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  registerButton: {
+    marginTop: 10,
+  },
+  registerText: {
+    color: colors.marron,
+    fontSize: 16,
   },
 });
 

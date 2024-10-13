@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 let deviceHeight = Dimensions.get('window').height;
 let deviceWidth = Dimensions.get('window').width;
 
-const showImage = (props) => {
+const ShowImage = (props) => {
     
   return (
   <View style={{ flex: 1,justifyContent: "center",
@@ -14,11 +14,13 @@ const showImage = (props) => {
         <Image
       source={{uri:props.route.params.url}}
       style={{
-        backgroundColor:'#2e2e2e',
+        backgroundColor:'#000',
+        backgroundColor:'#000',
         width: deviceWidth, // Set the width to the screen width
         height: deviceHeight, // Set the height to the screen height
         resizeMode: 'contain', // Maintain aspect ratio
         alignItems: 'center',
+        
       }}
       />
         </Pinchable>      
@@ -27,4 +29,4 @@ const showImage = (props) => {
   )
 }
 
-export default showImage
+export default ShowImage
